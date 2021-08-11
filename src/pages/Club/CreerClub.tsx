@@ -36,7 +36,7 @@ export class CreerClub extends React.Component<Props, States> {
 
     render () {
         return (
-            <Grid container justify="center" style={{marginTop: 15}}>
+            <Grid container justifyContent="center" style={{marginTop: 15}}>
                 <Grid item xs={6}>
                     <Paper elevation={4} className={paperClass}>
                         <Formik

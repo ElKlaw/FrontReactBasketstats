@@ -1,8 +1,10 @@
 import React from "react";
-import { AppBar, Avatar, Badge, Grid, IconButton, makeStyles, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Avatar, Badge, Grid, IconButton, Toolbar, Typography } from "@material-ui/core";
 import { blueGrey, red } from "@material-ui/core/colors";
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { Link } from "@material-ui/core";
+import { makeStyles } from "@material-ui/styles";
+import { px } from "csx";
 
 interface Props {
     isConnect: boolean
@@ -15,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     },
     appBar: {
       backgroundColor: "white",
-      padding: theme.spacing(1),
+      padding: px(5),
       minHeight: "auto"
     },
     toolbar: {
@@ -28,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer"
     },
     avatar: {
-        padding: theme.spacing(0)
+        padding: px(0)
     },
     linkConnection: {
         color: blueGrey[400],
@@ -39,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
         color: "white",
         backgroundColor: red[700],
         borderRadius: 100,
-        padding: theme.spacing(1),
+        padding: px(5),
         fontWeight: 700,
         fontSize: 10
     }
@@ -59,7 +61,7 @@ export function AppBarCustom({isConnect, history}: Props) {
                         </Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Grid container justify="flex-end" alignItems="center" spacing={3}>
+                        <Grid container justifyContent="flex-end" alignItems="center" spacing={3}>
                             {isConnect ?
                                 <React.Fragment>
                                     <Grid item>

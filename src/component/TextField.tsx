@@ -1,5 +1,6 @@
-import { TextField, withStyles } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
 import { teal } from "@material-ui/core/colors";
+import { withStyles } from "@material-ui/styles";
 
 
 export const TextFieldBase = withStyles((theme) => ({

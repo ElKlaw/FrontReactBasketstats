@@ -7,11 +7,10 @@ import { Club } from "../../model/Club";
 import imagefond from "../../ressources/fond.jpg";
 import SearchIcon from '@material-ui/icons/Search';
 import { TextFieldBase } from "../../component/TextField";
-import { CardClub } from "../../component/Card";
-import { getPhotoById } from "../../api/PhotoService";
 import { PaginationBase } from "../../component/Pagination";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { ButtonBase } from "../../component/Button";
+import { CardClub } from "component/Club/CardClub";
 
 interface Props {
     history: any
@@ -59,9 +58,6 @@ export class ClubsSearch extends React.Component<Props, States> {
         const elementParPage = 24
         searchClub(search,page,elementParPage).then((result: any) => {
             const clubs = [...result.content]
-            clubs.forEach(async club => {
-                this.loadImage(club);
-            })
             this.setState({
                 clubs,
                 page: page,
@@ -69,33 +65,6 @@ export class ClubsSearch extends React.Component<Props, States> {
                 nbreClub: result.totalElements
             })
         })
-    }
-
-    loadImage = (club: Club) => {
-        this.getImageFond(club);
-        this.getImageLogo(club);
-    }
-
-    getImageFond = (club: Club) => {
-        getPhotoById(club.fond.id).then(
-            (image: Blob) => {
-                const clubs = [...this.state.clubs]
-                const index = clubs.findIndex(el => el.id === club.id)
-                clubs[index].imagefont = image
-                this.setState({ clubs })
-            }
-        )
-    }
-    
-    getImageLogo = async (club: Club) =>{
-        getPhotoById(club.logo.id).then(
-            (image: Blob) => {
-                const clubs = [...this.state.clubs]
-                const index = clubs.findIndex(el => el.id === club.id)
-                clubs[index].imagelogo = image
-                this.setState({ clubs })
-            }
-        )
     }
 
     handleChangePage = (event : any, newPage: number) => { 
@@ -120,7 +89,7 @@ export class ClubsSearch extends React.Component<Props, States> {
         return (
             <Grid container>
                 <Grid item xs={12} className={fond}>
-                    <Grid container justify="center" style={{textAlign: "center", padding:15, minHeight: 200}}>
+                    <Grid container justifyContent="center" style={{textAlign: "center", padding:15, minHeight: 200}}>
                         <Grid item xs={12}>
                             <Typography variant="h3" className={titre}>
                                 Retrouver un club inscrit
@@ -174,7 +143,7 @@ export class ClubsSearch extends React.Component<Props, States> {
                                 <Grid item xs={12} sm={6} md={4} lg={4} key={club.id}>
                                     <CardClub
                                         club={club}
-                                        voirPlus={()=> history.push(`/club/${club.url}/accueil`)}
+                                        history={history}
                                     />
                                 </Grid>
                             ))}

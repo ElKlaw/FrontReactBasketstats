@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import 'moment/locale/fr'
+import moment from "moment"
+
+moment().locale('fr')
 
 ReactDOM.render(
   <React.StrictMode>

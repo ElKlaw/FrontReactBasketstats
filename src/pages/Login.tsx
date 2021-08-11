@@ -34,7 +34,7 @@ export class Login extends React.Component<Props, States> {
 
     render() {
         return (
-            <Grid container justify="center">
+            <Grid container justifyContent="center">
                 <Grid item xs={12} sm={6} md={4} lg={3}>
                     <Paper elevation={2} className={paperClass}>
                         <Formik

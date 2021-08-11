@@ -1,5 +1,5 @@
-import { Photo } from "./Photo";
 import { Salle } from "./Salle";
+import { Sport } from "./Sport";
 import { Ville } from "./Ville";
 
 
@@ -9,11 +9,9 @@ export interface Club {
     url: string
     nom: string
     codeClub: string
-    sport: string
+    sport: Sport
     villes: Ville[]
     salles: Salle[]
-    fond: Photo
-    logo: Photo
-    imagefont?: Blob
-    imagelogo?: Blob
+    fond: number
+    logo: number
 }

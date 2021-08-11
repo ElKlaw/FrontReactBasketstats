@@ -20,7 +20,7 @@ export function Footer () {
                     <Typography variant="h6">
                         Suivez-nous
                     </Typography>
-                    <Grid container justify="center" spacing={3} alignContent="center">
+                    <Grid container justifyContent="center" spacing={3} alignContent="center">
                         <Grid item>
                             <YouTubeIcon fontSize="large" className={iconReseau}/> 
                             <span>Youtube</span>

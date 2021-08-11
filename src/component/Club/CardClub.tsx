@@ -1,14 +1,16 @@
-import { Card, CardActions, CardContent, CardMedia, makeStyles } from "@material-ui/core";
+import { Card, CardActions, CardContent, CardMedia } from "@material-ui/core";
 import { grey } from "@material-ui/core/colors";
 import { Skeleton } from "@material-ui/lab";
 import { percent, px, rem } from "csx";
-import React from "react";
-import { Club } from "../model/Club";
+import React, { useEffect } from "react";
+import { Club } from "../../model/Club";
 import SportsBasketballIcon from '@material-ui/icons/SportsBasketball';
 import RoomIcon from '@material-ui/icons/Room';
-import { ButtonBase } from "./Button";
+import { ButtonBase } from "../Button";
+import { makeStyles } from "@material-ui/styles";
+import { getPhotoById } from "api/PhotoService";
 
-const useStylesCardClub = makeStyles({
+const useStyles = makeStyles({
     media: {
       height: 200,
     },
@@ -52,28 +54,58 @@ const useStylesCardClub = makeStyles({
 
 interface PropsCardClub{
     club: Club
-    voirPlus: () => void
+    history: any
 }
-export function CardClub ({club, voirPlus} : PropsCardClub) {
-    const classes = useStylesCardClub();
+export function CardClub ({club, history} : PropsCardClub) {
+    const classes = useStyles();
+    const [photoFont, setPhotoFont] = React.useState<string | undefined>(undefined);
+    const [logo, setLogo] = React.useState<string | undefined>(undefined);
+    
+    const getPhotos = () => {
+        getImageFond();
+        getImageLogo();
+    }
+
+    const getImageFond = () => {
+        const font = club.fond
+        if(font){
+            getPhotoById(font).then((photo: string) => {
+                setPhotoFont(photo)
+            })
+        }
+    }
+    
+    const getImageLogo = () =>{
+        const logo = club.logo
+        if(logo) {
+            getPhotoById(logo).then((photo: string) => {
+                setLogo(photo)
+            })
+        }
+    }
+    
+    useEffect(() => {
+        getPhotos()
+    },[club]);
+
     return (
         <Card>
-            {club.imagefont ?
+            {photoFont ?
                 <CardMedia
                     component='img'
                     className={classes.media}
-                    image={URL.createObjectURL(club.imagefont)}
+                    image={photoFont}
                     title="photo club"
                 />
             : 
-                <Skeleton variant="rect" width="100%" height={200} />
+                <Skeleton variant="rectangular" width="100%" height={200} />
             }
             <CardContent style={{position: "relative"}}>
                 <div className={classes.divLogo}>
-                    {club.imagelogo ?
-                        <img className={classes.logo} src={URL.createObjectURL(club.imagelogo)} alt="logo club"/>
+                    {logo ?
+                        <img className={classes.logo} src={logo} alt="logo club"/>
                     :
-                        <Skeleton variant="circle" width="100%" height="100%"/>
+                        <Skeleton variant="circular" width="100%" height="100%"/>
                     }                
                 </div>
                 <p className={classes.nomComplet}>{club.nomcomplet}</p>
@@ -93,7 +125,7 @@ export function CardClub ({club, voirPlus} : PropsCardClub) {
             <CardActions>
                 <ButtonBase
                     fullWidth
-                    onClick={()=> voirPlus()}
+                    onClick={()=> history.push(`/club/${club.url}`)}
                 >
                     Voir plus
                 </ButtonBase>

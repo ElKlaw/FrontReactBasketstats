@@ -1,6 +1,6 @@
 export interface Photo {
-    id: number
-    extension: string
-    chemin: string
+    id?: number
     nom: string
+    extension: string
+    data: any
 }

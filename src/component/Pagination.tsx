@@ -9,7 +9,7 @@ interface Props {
 }
 export function PaginationBase({nbrePage, page, handleChangePage}: Props) {
     return (
-        <Grid container justify="center">
+        <Grid container justifyContent="center">
             <Grid item>
                 <Pagination 
                     size="small" 

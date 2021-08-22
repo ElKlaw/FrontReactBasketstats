@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/styles";
 import { getPhotoById } from "api/PhotoService";
 import { ButtonBase } from "component/Button";
 import { Equipe } from "model/Equipe";
+import { Photo } from "model/Photo";
 import React, { useEffect } from "react";
 import { largeTexte, mediumTexte } from "style/text";
 
@@ -19,12 +20,12 @@ interface Props {
 
 export function CardEquipe({equipe, history} : Props) {
     const classes = useStyles();
-    const [photo, setPhoto] = React.useState<string | undefined>(undefined);
+    const [photo, setPhoto] = React.useState<Photo | undefined>(undefined);
 
     const getPhotos = () => { 
-        const photo = equipe.photo
-        if(photo) {
-            getPhotoById(photo).then((photo: string) => {
+        const photoEquipe = equipe.photo
+        if(photoEquipe) {
+            getPhotoById(photoEquipe).then((photo: Photo) => {
                 setPhoto(photo)
             })
         }
@@ -40,7 +41,7 @@ export function CardEquipe({equipe, history} : Props) {
                 <CardMedia
                     component='img'
                     className={classes.media}
-                    image={photo}
+                    src={`data:${photo.extension};base64,${photo.data}`}
                     title="photo club"
                 />
             : 

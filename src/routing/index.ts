@@ -1,10 +1,11 @@
 import { ClubsSearch } from "pages/Club/ClubsSearch"
-import routeClub from "./club"
 import routeMatch from "./match"
+import routeEquipe from "./equipe"
+import { routesClub } from "./club"
 
 export interface IRoute {
     url: string
-    exact: boolean
+    exact?: boolean
     component: any
 }
 
@@ -14,6 +15,7 @@ export default [
         exact: true,
         component: ClubsSearch
     },
-    ...routeClub,
-    ...routeMatch
+    ...routesClub,
+    ...routeMatch,
+    ...routeEquipe
 ]

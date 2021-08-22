@@ -1,12 +1,16 @@
 import { Grid, ToggleButton, ToggleButtonGroup } from "@material-ui/core";
 import { getMatchsFuturByClubId, getMatchsPasseByClubId } from "api/MatchService";
+import { ButtonBase } from "component/Button";
+import CustomizedDialogs from "component/Dialog";
 import { percent, px } from "csx";
 import { Club } from "model/Club";
 import { Match } from "model/Match";
 import moment from "moment";
+import { FormulaireMatch } from "pages/Formulaire/FormulaireMatch";
 import React, { useEffect } from "react";
 import { style } from "typestyle";
 import { groupMatchsByMonth } from "utils/Match/matchUtils";
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 const table = style({
     width: percent(100)
@@ -48,9 +52,11 @@ const buttonGroupGauche = style({
 
 interface Props {
     club: Club
+    resfresh: () => void
 }
 
 export function MatchClub({club}: Props) {
+    const [isOpenModalCreation, setIsOpenModalCreation] = React.useState<boolean>(false);
     const [menu, setMenu] = React.useState<string>("futur");
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [matchsFutur, setMatchsFutur] = React.useState<Map<string, Array<Match>>>(new Map());
@@ -173,6 +179,19 @@ export function MatchClub({club}: Props) {
 
     return(
         <Grid container spacing={1}>
+            <Grid item xs={12}>
+                <Grid container spacing={1} justifyContent="center">
+                    <Grid item xs={4}>
+                        <ButtonBase
+                            fullWidth
+                            startIcon={<AddCircleOutlineIcon />}
+                            onClick={()=> setIsOpenModalCreation(true)}
+                        >
+                            Créer un match
+                        </ButtonBase>
+                    </Grid>
+                </Grid>
+            </Grid>
             <Grid item xs={12} style={{textAlign: "center"}}>
                 <ToggleButtonGroup value={menu} exclusive onChange={changeMenu}>
                     <ToggleButton  value="futur" className={buttonGroupGauche}>Matchs à venir</ToggleButton>
@@ -186,6 +205,22 @@ export function MatchClub({club}: Props) {
                     getTableauMatchPasse(matchsPasse)
                 }
             </Grid>
+            <CustomizedDialogs 
+                handleClose={()=> setIsOpenModalCreation(false)} 
+                isOpen={isOpenModalCreation}
+                title={
+                    <span>Créer un match</span>
+                }
+                content={
+                    <FormulaireMatch 
+                        onClose={()=> {
+                            setIsOpenModalCreation(false)
+                            getMatchs()
+                        }}
+                        club={club}
+                    />
+                }
+            />
         </Grid>
     )
 }

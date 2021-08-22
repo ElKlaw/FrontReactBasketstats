@@ -9,6 +9,7 @@ import React, { useEffect } from "react";
 
 interface Props {
     club: Club
+    resfresh: () => void
 }
 
 export function AccueilClub({club} :Props) {

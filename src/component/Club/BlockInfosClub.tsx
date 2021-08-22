@@ -22,7 +22,7 @@ export function BlockInfosClub({club}: Props){
                 </Grid>
                 <Grid item xs={12}>
                     <span className={titreInfos}>Sport : </span>
-                    <span>{club.sport}</span>
+                    <span>{club.sport.nom}</span>
                 </Grid>
                 <Grid item xs={12}>
                     <span className={titreInfos}>Région : </span>
@@ -35,7 +35,7 @@ export function BlockInfosClub({club}: Props){
                 <Grid item xs={12}>
                     <span className={titreInfos}>Ville : </span>
                     {club.villes.map((ville: Ville, index: number) => (
-                        <span>{ville.nom} ({ville.codePostal}) {club.villes.length >= index+1 ? '' : ', '}</span>
+                        <span>{ville.nom} ({ville.codePostal}) {club.villes.length > index+1 ? ', ' : ''}</span>
                     ))}
                 </Grid>
             </Grid>

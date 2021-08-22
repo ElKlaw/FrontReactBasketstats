@@ -11,5 +11,5 @@ export interface Equipe {
     division: string
     poule: string
     photo: number
-    Club: Club
+    clubEquipe: Club
 }

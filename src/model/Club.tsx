@@ -14,4 +14,6 @@ export interface Club {
     salles: Salle[]
     fond: number
     logo: number
+    couleurprincipale: string
+    couleursecondaire: string
 }

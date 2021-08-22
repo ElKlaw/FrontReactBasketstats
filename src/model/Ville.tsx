@@ -4,6 +4,6 @@ export interface Ville {
     codeDepartement: string
     departement: string
     region: string
-    codePostal: number
+    codePostal: string
     pays: string
 }

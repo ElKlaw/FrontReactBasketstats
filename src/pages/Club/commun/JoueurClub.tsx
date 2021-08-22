@@ -3,6 +3,7 @@ import { Club } from "model/Club";
 
 interface Props {
     club: Club
+    resfresh: () => void
 }
 
 export function JoueurClub({club}: Props) {

@@ -9,6 +9,7 @@ import RoomIcon from '@material-ui/icons/Room';
 import { ButtonBase } from "../Button";
 import { makeStyles } from "@material-ui/styles";
 import { getPhotoById } from "api/PhotoService";
+import { Photo } from "model/Photo";
 
 const useStyles = makeStyles({
     media: {
@@ -47,6 +48,9 @@ const useStyles = makeStyles({
     icon: {
         verticalAlign: "middle",
         marginRight: 10
+    },
+    textInfos: {
+        verticalAlign: "middle"
     }
 });
 
@@ -58,8 +62,8 @@ interface PropsCardClub{
 }
 export function CardClub ({club, history} : PropsCardClub) {
     const classes = useStyles();
-    const [photoFont, setPhotoFont] = React.useState<string | undefined>(undefined);
-    const [logo, setLogo] = React.useState<string | undefined>(undefined);
+    const [photoFont, setPhotoFont] = React.useState<Photo | undefined>(undefined);
+    const [logo, setLogo] = React.useState<Photo | undefined>(undefined);
     
     const getPhotos = () => {
         getImageFond();
@@ -69,7 +73,7 @@ export function CardClub ({club, history} : PropsCardClub) {
     const getImageFond = () => {
         const font = club.fond
         if(font){
-            getPhotoById(font).then((photo: string) => {
+            getPhotoById(font).then((photo: Photo) => {
                 setPhotoFont(photo)
             })
         }
@@ -78,7 +82,7 @@ export function CardClub ({club, history} : PropsCardClub) {
     const getImageLogo = () =>{
         const logo = club.logo
         if(logo) {
-            getPhotoById(logo).then((photo: string) => {
+            getPhotoById(logo).then((photo: Photo) => {
                 setLogo(photo)
             })
         }
@@ -94,7 +98,7 @@ export function CardClub ({club, history} : PropsCardClub) {
                 <CardMedia
                     component='img'
                     className={classes.media}
-                    image={photoFont}
+                    src={`data:${photoFont.extension};base64,${photoFont.data}`}
                     title="photo club"
                 />
             : 
@@ -103,7 +107,7 @@ export function CardClub ({club, history} : PropsCardClub) {
             <CardContent style={{position: "relative"}}>
                 <div className={classes.divLogo}>
                     {logo ?
-                        <img className={classes.logo} src={logo} alt="logo club"/>
+                        <img className={classes.logo} src={`data:${logo.extension};base64,${logo.data}`} />
                     :
                         <Skeleton variant="circular" width="100%" height="100%"/>
                     }                
@@ -111,21 +115,21 @@ export function CardClub ({club, history} : PropsCardClub) {
                 <p className={classes.nomComplet}>{club.nomcomplet}</p>
                 <div className={classes.sport}>
                     <SportsBasketballIcon className={classes.icon}/>
-                    <span>{club.sport}</span>
+                    <span className={classes.textInfos}>{club.sport.nom}</span>
                 </div>
                 <div className={classes.region}>
                     <RoomIcon className={classes.icon} /> 
-                    <span>{club.villes[0].region}</span>
+                    <span className={classes.textInfos}>{club.villes[0].region}</span>
                 </div>
                 <div className={classes.ville}>
                     <RoomIcon className={classes.icon} /> 
-                    <span>{club.villes[0].codeDepartement} - {club.villes[0].departement}</span>
+                    <span className={classes.textInfos}>{club.villes[0].codeDepartement} - {club.villes[0].departement}</span>
                 </div>
             </CardContent>
             <CardActions>
                 <ButtonBase
                     fullWidth
-                    onClick={()=> history.push(`/club/${club.url}`)}
+                    onClick={()=> history.push(`/club/${club.url}/accueil`)}
                 >
                     Voir plus
                 </ButtonBase>

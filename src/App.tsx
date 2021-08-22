@@ -5,12 +5,10 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Inscription } from './pages/Inscription';
 import { AppBarCustom } from './component/AppBarCustom';
 import { Grid } from '@material-ui/core';
-import { CustomMenu } from './component/Menu';
 import { Footer } from './component/Footer';
 import allRoutes, { IRoute } from "./routing/index"
 
@@ -30,7 +28,7 @@ function App() {
                   <Route path="/login" exact component={Login} />
                   <Route path="/inscription" exact component={Inscription} />
                   {allRoutes.map((route : IRoute) => (
-                    <Route path={route.url} exact={route.exact} component={route.component} />
+                    <Route key={route.url} path={route.url} exact={route.exact} component={route.component} />
                   ))}
                 </Switch>
               </Grid>

@@ -5,12 +5,16 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'moment/locale/fr'
 import moment from "moment"
+import { LocalizationProvider } from '@material-ui/lab';
+import AdapterMoment from '@material-ui/lab/AdapterMoment';
 
 moment().locale('fr')
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <LocalizationProvider dateAdapter={AdapterMoment} locale="fr">
+      <App />
+    </LocalizationProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -5,8 +5,8 @@ import { withStyles } from "@material-ui/styles";
 import { important, px } from "csx";
 
 interface TabsProps {
-    value: number
-    onChange: (event: React.ChangeEvent<{}>, newValue: number) => void
+    value: any
+    onChange: (event: React.ChangeEvent<{}>, newValue: any) => void
 }
 
 export const TabsBase = withStyles({

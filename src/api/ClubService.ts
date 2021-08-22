@@ -20,3 +20,17 @@ export function addClub( club : any ) : Promise<Club>{
         body: JSON.stringify(club)
     })
 }
+
+export function modifierClub(id: number, club : any ) : Promise<Club>{
+    return fetchApi(`/club/${id}`,{
+        method: "PUT",
+        body: JSON.stringify(club)
+    })
+}
+
+export function isUrlClubExist( url : string ) : Promise<boolean>{
+    return fetchApi(`/club/exist?url=${url}`,{
+        method: "GET"
+    })
+}
+

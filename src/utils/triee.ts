@@ -1,0 +1,1 @@
+export const trierByNom = (a: any, b: any) => a.nom.localeCompare(b.nom)

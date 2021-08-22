@@ -1,40 +1,69 @@
-import { Grid } from "@material-ui/core";
+import { Autocomplete, Button, Checkbox, Grid, TextField } from "@material-ui/core";
 import { Equipe } from "model/Equipe";
 import * as Yup from "yup"
 import { Formik } from "formik"
 import { TextFieldBase } from "component/TextField";
+import { Club } from "model/Club";
+import { useEffect } from "react";
+import React from "react";
+import { getEquipesByClubId } from "api/EquipeService";
+import { OptionFormulaire } from "model/Formulaire";
+import { FormControlLabel } from "@material-ui/core";
+import { DatePicker, TimePicker } from "@material-ui/lab";
+import { ButtonBase } from "component/Button";
 
 const validation = Yup.object().shape({
-    dateMatch: Yup.string().required("Veuillez renseigner un nom."),
+    dateMatch: Yup.object().shape({
+        label: Yup.string()
+    }).default(null).typeError("Veuillez renseigner une date de match."),
     domicile: Yup.boolean(),
-    heureMatch: Yup.string().required("Veuillez renseigner un nom."),
-    heureRDV: Yup.string().required("Veuillez renseigner un nom."),
-    adversaire: Yup.string().required("Veuillez renseigner un nom."),
-    scoreEquipe: Yup.number(),
-    scoreAdversaire: Yup.number(),
-    infosSup: Yup.string().required("Veuillez renseigner un nom."),
-    equipe: Yup.string().required("Veuillez renseigner un nom.")
+    heureRDV: Yup.object().shape({
+        label: Yup.string()
+    }).default(null).typeError("Veuillez renseigner une heure de rendez-vous."),
+    heureMatch: Yup.object().shape({
+        label: Yup.string()
+    }).default(null).typeError("Veuillez renseigner une heure de match."),
+    adversaire: Yup.string().required("Veuillez renseigner un adversaire."),
+    scoreEquipe: Yup.number().nullable(),
+    scoreAdversaire: Yup.number().nullable(),
+    infosSup: Yup.string(),
+    equipe: Yup.object().shape({
+        label: Yup.string(),
+        value: Yup.string()
+    }).default(undefined).required("Veuillez renseigner une équipe.")
 })
 
 const initialValues = {
-    dateMatch: "2017-05-24",
-    domicile: "",
-    heureMatch: "",
-    heureRDV: "",
+    dateMatch: null,
+    domicile: true,
+    heureMatch: null,
+    heureRDV: null,
     adversaire: "",
-    scoreEquipe: "",
-    scoreAdversaire: "",
+    scoreEquipe: null,
+    scoreAdversaire: null,
     infosSup: "",
-    equipe: ""
+    equipe: undefined
 }
 
 
 interface Props {
-    equipes : Array<Equipe>
+    club : Club
+    onClose : () => void
 }
 
-export function FormulaireMatch({} : Props) {
+export function FormulaireMatch({club, onClose} : Props) {
+    const [optionsEquipe, setOptionsEquipe] = React.useState<Array<OptionFormulaire>>([]);
+    
+    const getEquipes = () => {
+        getEquipesByClubId(club.id).then((equipes : Array<Equipe>) => {
+            setOptionsEquipe(equipes.map(el =>({value: el.id, label: el.nom})))
+        })
+    }
 
+    useEffect(() => {
+        getEquipes()
+    },[club]);
+    
     const validate = (values : any) => {
         console.log(values)
     }
@@ -47,72 +76,42 @@ export function FormulaireMatch({} : Props) {
                 validate(values)
             }}
         >
-        {({ handleSubmit, handleChange, handleBlur, values, errors, touched }) => (
+        {({ handleSubmit, handleChange, handleBlur, setFieldValue, values, errors, touched }) => (
             <form onSubmit={handleSubmit}>
-                <Grid container spacing={1}>
-                    <Grid item xs={12}>
-                        <TextFieldBase
-                            id="dateMatch"
-                            type="date"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            label={"dateMatch"}
-                            value={values.dateMatch}
-                            variant="outlined"
-                            helperText={touched.dateMatch ? errors.dateMatch : ""}
-                            error={touched.dateMatch && Boolean(errors.dateMatch)}
-                            fullWidth
-                            InputLabelProps={{
-                              shrink: true,
+                <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={5}>
+                        <Autocomplete
+                            id="equipe"
+                            disableClearable
+                            options={optionsEquipe}
+                            getOptionLabel={(option) => option.label}
+                            onChange={(e, value) => {
+                                setFieldValue("equipe", value)
                             }}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextFieldBase
-                            id="domicile"
-                            type="text"
-                            onChange={handleChange}
                             onBlur={handleBlur}
-                            label={"domicile"}
-                            value={values.domicile}
-                            variant="outlined"
-                            helperText={touched.domicile ? errors.domicile : ""}
-                            error={touched.domicile && Boolean(errors.domicile)}
-                            fullWidth
+                            value={values.equipe}
+                            renderInput={(params) => 
+                                <TextFieldBase
+                                    {...params}
+                                    label="Équipe"
+                                    placeholder="Veuillez sélectionner l'équipe."
+                                    variant="outlined"
+                                    size="small"
+                                    helperText={touched.equipe ? errors.equipe : ""}
+                                    error={touched.equipe && Boolean(errors.equipe)}
+                                    fullWidth
+                                />
+                            }
                         />
                     </Grid>
-                    <Grid item xs={12}>
-                        <TextFieldBase
-                            id="heureMatch"
-                            type="text"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            label={"heureMatch"}
-                            value={values.heureMatch}
-                            variant="outlined"
-                            helperText={touched.heureMatch ? errors.heureMatch : ""}
-                            error={touched.heureMatch && Boolean(errors.heureMatch)}
-                            fullWidth
-                        />
+                    <Grid item xs={2} style={{textAlign: "center"}}>
+                        <span>CONTRE</span>
                     </Grid>
-                    <Grid item xs={12}>
-                        <TextFieldBase
-                            id="heureRDV"
-                            type="text"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            label={"heureRDV"}
-                            value={values.heureRDV}
-                            variant="outlined"
-                            helperText={touched.heureRDV ? errors.heureRDV : ""}
-                            error={touched.heureRDV && Boolean(errors.heureRDV)}
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={5}>
                         <TextFieldBase
                             id="adversaire"
                             type="text"
+                            size="small"
                             onChange={handleChange}
                             onBlur={handleBlur}
                             label={"adversaire"}
@@ -124,37 +123,80 @@ export function FormulaireMatch({} : Props) {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextFieldBase
-                            id="scoreEquipe"
-                            type="text"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            label={"scoreEquipe"}
-                            value={values.scoreEquipe}
-                            variant="outlined"
-                            helperText={touched.scoreEquipe ? errors.scoreEquipe : ""}
-                            error={touched.scoreEquipe && Boolean(errors.scoreEquipe)}
-                            fullWidth
+                        <FormControlLabel 
+                            control={
+                                <Checkbox 
+                                    defaultChecked 
+                                    checked={values.domicile}
+                                    onChange={(event) => setFieldValue("domicile", event.target.checked)}
+                                />
+                            } 
+                            label="Domicile" 
                         />
                     </Grid>
-                    <Grid item xs={12}>
-                        <TextFieldBase
-                            id="scoreAdversaire"
-                            type="text"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            label={"scoreAdversaire"}
-                            value={values.scoreAdversaire}
-                            variant="outlined"
-                            helperText={touched.scoreAdversaire ? errors.scoreAdversaire : ""}
-                            error={touched.scoreAdversaire && Boolean(errors.scoreAdversaire)}
-                            fullWidth
+                    <Grid item xs={4}>
+                        <DatePicker
+                            label="Date du match"
+                            value={values.dateMatch}
+                            onChange={(newValue) => setFieldValue("dateMatch", newValue)}
+                            renderInput={(params) => 
+                                <TextField 
+                                    {...params} 
+                                    id="dateMatch"
+                                    onBlur={handleBlur}
+                                    variant="outlined"
+                                    size="small"
+                                    helperText={touched.dateMatch ? errors.dateMatch : ""}
+                                    error={touched.dateMatch && Boolean(errors.dateMatch)}
+                                    fullWidth
+                                />
+                            }
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TimePicker
+                            value={values.heureRDV}
+                            onChange={(newValue) => setFieldValue("heureRDV", newValue)}
+                            renderInput={(params) => 
+                                <TextField 
+                                    id="heureRDV"
+                                    {...params} 
+                                    onBlur={handleBlur}
+                                    label={"Heure du match"}
+                                    variant="outlined"
+                                    size="small"
+                                    helperText={touched.heureRDV ? errors.heureRDV : ""}
+                                    error={touched.heureRDV && Boolean(errors.heureRDV)}
+                                    fullWidth
+                                />
+                            }
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TimePicker
+                            value={values.heureMatch}
+                            onChange={(newValue) => setFieldValue("heureMatch", newValue)}
+                            renderInput={(params) => 
+                                <TextField 
+                                    id="heureMatch"
+                                    {...params} 
+                                    onBlur={handleBlur}
+                                    label={"Heure du match"}
+                                    variant="outlined"
+                                    size="small"
+                                    helperText={touched.heureMatch ? errors.heureMatch : ""}
+                                    error={touched.heureMatch && Boolean(errors.heureMatch)}
+                                    fullWidth
+                                />
+                            }
                         />
                     </Grid>
                     <Grid item xs={12}>
                         <TextFieldBase
                             id="infosSup"
                             type="text"
+                            multiline
+                            rows={4}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             label={"infosSup"}
@@ -165,19 +207,23 @@ export function FormulaireMatch({} : Props) {
                             fullWidth
                         />
                     </Grid>
-                    <Grid item xs={12}>
-                        <TextFieldBase
-                            id="equipe"
-                            type="text"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            label={"equipe"}
-                            value={values.equipe}
-                            variant="outlined"
-                            helperText={touched.equipe ? errors.equipe : ""}
-                            error={touched.equipe && Boolean(errors.equipe)}
+                    <Grid item xs={6}>
+                        <Button 
+                            variant="outlined" 
+                            color="error"
+                            onClick={()=> onClose()}
                             fullWidth
-                        />
+                        >
+                            Annuler
+                        </Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <ButtonBase
+                            fullWidth
+                            type="submit"
+                        >
+                            Créer
+                        </ButtonBase>
                     </Grid>
                 </Grid>
             </form>

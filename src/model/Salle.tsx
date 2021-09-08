@@ -1,9 +1,7 @@
-import { Club } from "./Club";
-import { Lieu } from "./Lieu";
+import { Adresse } from "./Adresse";
 
 export interface Salle {
     id: number
     nom: string
-    lieu: Lieu
-    clubSalle: Club
+    adresse: Adresse
 }

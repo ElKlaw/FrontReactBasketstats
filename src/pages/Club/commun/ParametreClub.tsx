@@ -4,6 +4,7 @@ import { Club } from "model/Club";
 import React from "react";
 import { FormulaireEsthetique } from "../Parametre/FormulaireEsthetique";
 import { FormulaireInfosGeneral } from "../Parametre/FormulaireInfosGeneral";
+import { FormulaireSalles } from "../Parametre/FormulaireSalles";
 import { FormulaireVillesClub } from "../Parametre/FormulaireVillesClub";
 
 interface Props {
@@ -106,7 +107,10 @@ export function ParametreClub({club, refresh}: Props) {
                         <span>Salles du club</span>
                     </AccordionSummary>
                     <AccordionDetails>
-                        
+                        <FormulaireSalles
+                            club={club}
+                            validate={handleModification}
+                        />
                     </AccordionDetails>
                 </Accordion>
             </Grid>

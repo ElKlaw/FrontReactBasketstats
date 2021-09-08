@@ -3,12 +3,12 @@ import Box from '@material-ui/core/Box';
 import Autocomplete from '@material-ui/core/Autocomplete';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import Grid from '@material-ui/core/Grid';
-import { getVille } from '../api/DataGouvService';
+import { getAdresse } from '../api/DataGouvService';
 import { CircularProgress } from '@material-ui/core';
 import { classes, style } from 'typestyle';
 import { px } from 'csx';
 import { useDebouncedEffect } from '../utils/CustomHooks';
-import { DataGouvVille } from '../model/DataGouv';
+import { DataGouvAdresse } from '../model/DataGouv';
 import { TextFieldBase } from './TextField';
 
 const titleTextOption = style({
@@ -23,21 +23,20 @@ const textOption = style({
 interface Props {
   value: any
   onChange: (values : any) => void
-  helperText?: string | string[]
+  helperText?: any
   error?: boolean
   handleBlur?: (event: any) => void
-  multiple: boolean
 }
 
-export function AutocompleteVille({value, helperText, error, handleBlur, onChange, multiple} : Props) {
+export function AutocompleteAdresse({value, helperText, error, handleBlur, onChange} : Props) {
   const [loading, setLoading] = React.useState<boolean>(false)
   const [inputValue, setInputValue] = React.useState('');
-  const [options, setOptions] = React.useState<Array<DataGouvVille>>([]);
-  useDebouncedEffect(() => searchVille(), 500, [inputValue])
+  const [options, setOptions] = React.useState<Array<DataGouvAdresse>>([]);
+  useDebouncedEffect(() => searchAdresse(), 500, [inputValue])
   
-  const searchVille = async () => {
+  const searchAdresse = async () => {
     if(inputValue !== "") {
-      const result : Array<DataGouvVille>  = await getVille(inputValue)
+      const result : Array<DataGouvAdresse>  = await getAdresse(inputValue)
       setOptions(result)
       setLoading(false)
     }
@@ -45,14 +44,14 @@ export function AutocompleteVille({value, helperText, error, handleBlur, onChang
 
   return (
     <Autocomplete
-      id="villes"
-      getOptionLabel={(option: DataGouvVille) => option.departement ? `${option.nom} (${option.departement.code})` : option.nom}
+      id="adresse"
+      getOptionLabel={(option: DataGouvAdresse) => option.properties.label}
       options={options}
       filterOptions={(x) => x}
-      multiple={multiple}
       fullWidth
       value={value}
       loading={loading}
+      disableClearable
       size="small"
       onChange={(event, newValue) => {
         setInputValue("")
@@ -68,8 +67,8 @@ export function AutocompleteVille({value, helperText, error, handleBlur, onChang
       renderInput={(params) => (
         <TextFieldBase 
           {...params} 
-          label="Villes" 
-          placeholder="Saisir une ville"
+          label="Adresse" 
+          placeholder="Saisir une adresse"
           helperText={helperText}
           error={error} 
           InputProps={{
@@ -82,9 +81,9 @@ export function AutocompleteVille({value, helperText, error, handleBlur, onChang
           }}
         />
       )}
-      noOptionsText={inputValue !== "" ? "Aucune ville ne correspond à votre recherche" : "Veuillez saisir au moins 1 caractères"}
+      noOptionsText={inputValue !== "" ? "Aucune adresse ne correspond à votre recherche" : "Veuillez saisir au moins 1 caractères"}
       renderOption={(props, option) => (
-        <li {...props} key={option.code}>
+        <li {...props} key={option.properties.id}>
           <Grid container alignItems="center">
             <Grid item>
               <Box
@@ -93,10 +92,8 @@ export function AutocompleteVille({value, helperText, error, handleBlur, onChang
               />
             </Grid>
             <Grid item xs>
-              <p className={classes(textOption,titleTextOption)}>{option.nom}</p>
-              {(option.departement && option.region) &&
-                <p className={textOption}>{option.departement.code}, {option.departement.nom}, {option.region.nom}</p>
-              }
+              <p className={classes(textOption,titleTextOption)}>{option.properties.name}</p>
+              <p className={textOption}>{option.properties.city} ({option.properties.postcode})</p>
             </Grid>
           </Grid>
         </li>

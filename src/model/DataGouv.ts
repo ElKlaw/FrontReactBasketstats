@@ -1,25 +1,4 @@
-export interface DataGouvVille {
-  nom: string
-  codesPostaux: Array<string>
-  code: string
-  departement?: {
-    code: string
-    nom: string
-  },
-  region?: {
-    code: string,
-    nom: string
-  }
-}
-
-
-export interface DataGouv {
-  type: string
-  version: string
-  features: Array<FeatureDataGouv>
-}
-
-export interface FeatureDataGouv {
+export interface DataGouvAdresse {
   type: string
   geometry: Geometry
   properties: Properties
@@ -33,17 +12,31 @@ interface Geometry {
 interface Properties {
   label: string
   score: number
+  housenumber: string
   id: string
-  type: string
   name: string
   postcode: string
   citycode: string
   x: number
   y: number
-  population: number
   city: string
+  district: string
   context: string
+  type: string
   importance: number
+  street: string
 }
 
-
+export interface DataGouvVille {
+  nom: string
+  codesPostaux: Array<string>
+  code: string
+  departement?: {
+    code: string
+    nom: string
+  },
+  region?: {
+    code: string,
+    nom: string
+  }
+}

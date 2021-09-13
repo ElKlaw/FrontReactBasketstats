@@ -28,6 +28,10 @@ export function EquipeClub({club, history}: Props) {
         getEquipes()
     },[club]);
 
+    const voirDetailEquipe = (equipe: Equipe) => {
+        history.push(`/club/${club.id}/equipe/${equipe.id}`)
+    }
+
     return(
         <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -45,7 +49,10 @@ export function EquipeClub({club, history}: Props) {
             </Grid>
             {equipes.map((equipe : Equipe) => (
                 <Grid item xs={3}>
-                    <CardEquipe equipe={equipe} history={history} />
+                    <CardEquipe 
+                        equipe={equipe} 
+                        goTo={voirDetailEquipe}
+                    />
                 </Grid>
             ))}
             <CustomizedDialogs 

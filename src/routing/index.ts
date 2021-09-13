@@ -1,6 +1,5 @@
 import { ClubsSearch } from "pages/Club/ClubsSearch"
 import routeMatch from "./match"
-import routeEquipe from "./equipe"
 import { routesClub } from "./club"
 
 export interface IRoute {
@@ -16,6 +15,5 @@ export default [
         component: ClubsSearch
     },
     ...routesClub,
-    ...routeMatch,
-    ...routeEquipe
+    ...routeMatch
 ]

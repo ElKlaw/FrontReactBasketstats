@@ -8,6 +8,8 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { Salle } from "model/Salle";
 import CustomizedDialogs from "component/Dialog";
 import { FormulaireSalle } from "pages/Formulaire/FormulaireSalle";
+import { supprimerSalle } from "api/SalleService";
+import { Adresse } from "model/Adresse";
 
 interface Props {
     club: Club
@@ -17,13 +19,7 @@ interface Props {
 let initialValues : {
     id?: number
     nom: string
-    adresse?: {
-        id?: number
-        numRue: number
-        nomRue: string
-        longitude: string
-        latitude: string
-    }
+    adresse?: Adresse
     clubSalle: {
         id?: number
     }
@@ -54,11 +50,31 @@ export function FormulaireSalles ({club, validate} :Props) {
     }
 
     const modifier = (salle: Salle) => {
+        initialValues= {
+            id: salle.id,
+            nom: salle.nom,
+            adresse: {
+                id: salle.adresse.id,
+                numRue: salle.adresse.numRue,
+                nomRue: salle.adresse.nomRue,
+                longitude: salle.adresse.longitude,
+                latitude: salle.adresse.latitude,
+                codePostal: salle.adresse.codePostal,
+                ville: salle.adresse.ville
+            },
+            clubSalle: {
+                id: club.id
+            }
+        }
         setIsOpenModal(true)
     }
 
     const supprimer = (salle: Salle) => {
-        setIsOpenModal(true)
+        supprimerSalle(salle.id).then(res => {
+            validate(true)
+        }).catch(err => {
+            validate(false)
+        })
     }
     
     return(

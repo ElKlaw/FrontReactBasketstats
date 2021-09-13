@@ -15,10 +15,10 @@ const useStyles = makeStyles({
 
 interface Props {
     equipe: Equipe
-    history: any
+    goTo: (equipe: Equipe) => void
 }
 
-export function CardEquipe({equipe, history} : Props) {
+export function CardEquipe({equipe, goTo} : Props) {
     const classes = useStyles();
     const [photo, setPhoto] = React.useState<Photo | undefined>(undefined);
 
@@ -55,7 +55,7 @@ export function CardEquipe({equipe, history} : Props) {
             <CardActions>
                 <ButtonBase
                     fullWidth
-                    onClick={()=> history.push(`/equipe/${equipe.id}`)}
+                    onClick={()=> goTo(equipe)}
                 >
                     Voir plus
                 </ButtonBase>

@@ -1,6 +1,6 @@
 export interface Adresse {
-    id: number
-    numRue: number
+    id?: number
+    numRue: string
     nomRue: string
     longitude: string
     latitude: string

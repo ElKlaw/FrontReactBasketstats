@@ -13,3 +13,10 @@ export function getMatchsFuturByClubId( id : number ) : Promise<Array<Match>>{
         method: "GET"
     }).then(res=> res.content)
 }
+
+export function addMatch( match : any ) : Promise<Match>{
+    return fetchApi('/match',{
+        method: "POST",
+        body: JSON.stringify(match)
+    })
+}

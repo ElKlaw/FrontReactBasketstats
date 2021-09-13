@@ -8,7 +8,7 @@ import { Match } from "model/Match";
 import moment from "moment";
 import { FormulaireMatch } from "pages/Formulaire/FormulaireMatch";
 import React, { useEffect } from "react";
-import { style } from "typestyle";
+import { classes, style } from "typestyle";
 import { groupMatchsByMonth } from "utils/Match/matchUtils";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
@@ -27,7 +27,11 @@ const cellHeader = style({
     paddingLeft: px(10),
     paddingTop: px(7),
     paddingBottom: px(7),
-    fontWeight: 500
+    fontWeight: 500,
+})
+
+const cellHeaderMois = style({
+    backgroundColor: "#dadada"
 })
 
 const cellBody = style({
@@ -98,13 +102,15 @@ export function MatchClub({club}: Props) {
                         keys.map((mois : any) =>(
                             <React.Fragment>
                                 <tr>
-                                    <td colSpan={5} className={cellHeader}>{mois}</td>
+                                    <td colSpan={5} className={classes(cellHeader, cellHeaderMois)}>{mois}</td>
                                 </tr>
                                 {matchsMonth.get(mois)?.map(match =>(
                                     <tr>
                                         <td className={cellBody}>{moment(match.dateMatch).format('DD/MM/YY')}</td>
                                         <td className={cellBody}>{match.heureMatch}</td>
-                                        <td className={cellBody}>Lieu ???</td>
+                                        <td className={cellBody}>
+                                            {match.domicile ? match.salleMatch?.nom : match.adresseMatch?.ville }
+                                        </td>
                                         <td className={cellBody}>{match.equipe.nom}</td>
                                         <td className={cellBody}>{match.adversaire}</td>
                                     </tr>

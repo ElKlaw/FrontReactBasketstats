@@ -13,7 +13,9 @@ const validation = Yup.object().shape({
         numRue: Yup.number(),
         nomRue: Yup.string(),
         longitude: Yup.string(),
-        latitude: Yup.string()
+        latitude: Yup.string(),
+        ville: Yup.string(),
+        codePostal: Yup.string()
     }).default(undefined).required("Veuillez renseigner une adresse.")
 })
 
@@ -26,18 +28,9 @@ interface Props {
 export function FormulaireSalle({initialValues, onClose, validate} :Props) {
 
     const modifier = (values: any) => {
-        console.log(values)
-        const adresse = values.adresse.properties
         const salle = {
             nom: values.nom,
-            adresse: {
-                numRue: adresse.housenumber,
-                nomRue: adresse.street,
-                longitude: adresse.x,
-                latitude: adresse.y,
-                ville: adresse.city,
-                codePostal: adresse.postcode,
-            },
+            adresse: values.adresse,
             clubSalle: values.clubSalle
         }
         if(values.id) {
@@ -93,6 +86,8 @@ export function FormulaireSalle({initialValues, onClose, validate} :Props) {
                             }}
                             helperText={touched.adresse ? errors.adresse : ""}
                             error={touched.adresse && Boolean(errors.adresse)}
+                            label="Adresse"
+                            placeholder="Saisir une adresse"
                         />
                     </Grid>
                     <Grid item xs={6}>
@@ -109,7 +104,7 @@ export function FormulaireSalle({initialValues, onClose, validate} :Props) {
                             fullWidth
                             type="submit"
                         >
-                            Modifier
+                            {values.id ? "Modifier" : "Ajouter"}
                         </ButtonBase>
                     </Grid>
                 </Grid>

@@ -10,8 +10,8 @@ export interface Club {
     nom: string
     codeClub: string
     sport: Sport
-    villes: Ville[]
-    salles: Salle[]
+    villes: Array<Ville>
+    salles: Array<Salle>
     fond: number
     logo: number
     couleurprincipale: string

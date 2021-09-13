@@ -11,6 +11,10 @@ import { OptionFormulaire } from "model/Formulaire";
 import { FormControlLabel } from "@material-ui/core";
 import { DatePicker, TimePicker } from "@material-ui/lab";
 import { ButtonBase } from "component/Button";
+import { AutocompleteSalle } from "component/AutocompleteSalle";
+import { AutocompleteAdresse } from "component/AutocompleteAdresse";
+import { addMatch } from "api/MatchService";
+import moment from "moment";
 
 const validation = Yup.object().shape({
     dateMatch: Yup.object().shape({
@@ -38,6 +42,8 @@ const initialValues = {
     domicile: true,
     heureMatch: null,
     heureRDV: null,
+    lieuRdv: null,
+    lieuMatch: null,
     adversaire: "",
     scoreEquipe: null,
     scoreAdversaire: null,
@@ -65,7 +71,31 @@ export function FormulaireMatch({club, onClose} : Props) {
     },[club]);
     
     const validate = (values : any) => {
-        console.log(values)
+        if(values.domicile) {
+            const matchs : any = {
+                dateMatch: values.dateMatch,
+                domicile: values.domicile,
+                heureMatch: moment(values.heureMatch).format('HH:mm'),
+                heureRDV: moment(values.heureRDV).format('HH:mm'),
+                adversaire: values.adversaire,
+                scoreEquipe: null,
+                scoreAdversaire: null,
+                infosSup: values.infosSup,
+                equipe: {
+                    id: values.equipe.value
+                },
+                adresseRdv: null,
+                salleMatch: {
+                   id: values.lieuMatch.id
+                },
+                adresseMatch: null
+            }
+            addMatch(matchs).then(res => {
+                onClose()
+            })
+        } else {
+
+        }
     }
 
     return (
@@ -78,7 +108,7 @@ export function FormulaireMatch({club, onClose} : Props) {
         >
         {({ handleSubmit, handleChange, handleBlur, setFieldValue, values, errors, touched }) => (
             <form onSubmit={handleSubmit}>
-                <Grid container spacing={2} alignItems="center">
+                <Grid container spacing={2} alignItems="self-start">
                     <Grid item xs={5}>
                         <Autocomplete
                             id="equipe"
@@ -128,11 +158,54 @@ export function FormulaireMatch({club, onClose} : Props) {
                                 <Checkbox 
                                     defaultChecked 
                                     checked={values.domicile}
-                                    onChange={(event) => setFieldValue("domicile", event.target.checked)}
+                                    onChange={(event) => {
+                                        setFieldValue("lieu", null)
+                                        setFieldValue("domicile", event.target.checked)
+                                    }}
                                 />
                             } 
                             label="Domicile" 
                         />
+                    </Grid>
+                    {!values.domicile &&
+                        <Grid item xs={12}>
+                            <AutocompleteAdresse
+                                value={values.lieuRdv}
+                                onChange={(values : any) => {
+                                    setFieldValue("lieuRdv", values)
+                                }}
+                                helperText={touched.lieuRdv ? errors.lieuRdv : ""}
+                                error={touched.lieuRdv && Boolean(errors.lieuRdv)}
+                                label="Lieu de rendez-vous"
+                                placeholder="Saisir une adresse"
+                            />
+                        </Grid>
+                    }
+                    <Grid item xs={12}>
+                        {values.domicile ?
+                            <AutocompleteSalle
+                                club={club}
+                                value={values.lieuMatch}
+                                onChange={(values : any) => {
+                                    setFieldValue("lieuMatch", values)
+                                }}
+                                label="Lieu de match"
+                                placeholder="Saisir une salle"
+                                helperText={touched.lieuMatch ? errors.lieuMatch : ""}
+                                error={touched.lieuMatch && Boolean(errors.lieuMatch)}
+                            />
+                        :
+                            <AutocompleteAdresse
+                                value={values.lieuMatch}
+                                onChange={(values : any) => {
+                                    setFieldValue("lieuMatch", values)
+                                }}
+                                helperText={touched.lieuMatch ? errors.lieuMatch : ""}
+                                error={touched.lieuMatch && Boolean(errors.lieuMatch)}
+                                label="Lieu de match"
+                                placeholder="Saisir une adresse"
+                            />
+                        }
                     </Grid>
                     <Grid item xs={4}>
                         <DatePicker
@@ -162,7 +235,7 @@ export function FormulaireMatch({club, onClose} : Props) {
                                     id="heureRDV"
                                     {...params} 
                                     onBlur={handleBlur}
-                                    label={"Heure du match"}
+                                    label={"Heure de rendez-vous"}
                                     variant="outlined"
                                     size="small"
                                     helperText={touched.heureRDV ? errors.heureRDV : ""}

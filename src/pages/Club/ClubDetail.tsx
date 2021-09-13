@@ -101,6 +101,7 @@ export class ClubDetail extends React.Component<Props, States> {
 
     render() {
         const {isLoading, isLoadingImage, imagefont, imageLogo, club, menu} = this.state
+        const {history, match} = this.props
         return(
             <Grid container>
                 {isLoading ?
@@ -148,10 +149,13 @@ export class ClubDetail extends React.Component<Props, States> {
                                         <Route
                                             key={route.url}
                                             path={route.url}
+                                            exact={route.exact}
                                             render={props =>
                                                 <route.component 
                                                     club={club} 
                                                     refresh={() => this.getClub()}
+                                                    history={history}
+                                                    match={match}
                                                 />
                                             }
                                         />

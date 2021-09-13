@@ -2,7 +2,7 @@ import { Salle } from "model/Salle"
 import { fetchApi } from "utils/fetchUtils"
 
 
-export function getSalleByClubId( id : string ) : Promise<Salle>{
+export function getSalleByClubId( id : number ) : Promise<Array<Salle>>{
     return fetchApi(`/club/${id}/salle`,{
         method: "GET"
     })

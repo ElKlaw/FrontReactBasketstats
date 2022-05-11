@@ -1,10 +1,10 @@
 import * as React from 'react';
-import Box from '@material-ui/core/Box';
-import Autocomplete from '@material-ui/core/Autocomplete';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import Grid from '@material-ui/core/Grid';
+import Box from '@mui/material/Box';
+import Autocomplete from '@mui/material/Autocomplete';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Grid from '@mui/material/Grid';
 import { getAdresse } from '../api/DataGouvService';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress } from '@mui/material';
 import { classes, style } from 'typestyle';
 import { px } from 'csx';
 import { useDebouncedEffect } from '../utils/CustomHooks';
@@ -41,7 +41,9 @@ export function AutocompleteAdresse({label, placeholder, value, helperText, erro
   const searchAdresse = async () => {
     if(inputValue !== "") {
       const result : Array<DataGouvAdresse>  = await getAdresse(inputValue)
-      setOptions(result.map(el => MapperDataGouvAdresseToAdresse(el)))
+      console.log(result)
+      const newOptions = result.map(el => MapperDataGouvAdresseToAdresse(el))
+      setOptions(newOptions)
       setLoading(false)
     }
   }
@@ -86,8 +88,8 @@ export function AutocompleteAdresse({label, placeholder, value, helperText, erro
         />
       )}
       noOptionsText={inputValue !== "" ? "Aucune adresse ne correspond à votre recherche" : "Veuillez saisir au moins 1 caractères"}
-      renderOption={(props, option) => (
-        <li {...props} key={`${option.numRue} ${option.nomRue}`}>
+      renderOption={(props, option, index) => (
+        <li {...props} key={`${option.numRue} ${option.nomRue} ${index}`}>
           <Grid container alignItems="center">
             <Grid item>
               <Box

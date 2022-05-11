@@ -1,13 +1,13 @@
-import { Card, CardActions, CardContent, CardMedia } from "@material-ui/core";
-import { grey } from "@material-ui/core/colors";
-import { Skeleton } from "@material-ui/lab";
+import { Card, CardActions, CardContent, CardMedia } from "@mui/material";
+import { grey } from "@mui/material/colors";
+import { Skeleton } from '@mui/material';
 import { percent, px, rem } from "csx";
 import React, { useEffect } from "react";
 import { Club } from "../../model/Club";
-import SportsBasketballIcon from '@material-ui/icons/SportsBasketball';
-import RoomIcon from '@material-ui/icons/Room';
+import SportsBasketballIcon from '@mui/icons-material/SportsBasketball';
+import RoomIcon from '@mui/icons-material/Room';
 import { ButtonBase } from "../Button";
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from "@mui/styles";
 import { getPhotoById } from "api/PhotoService";
 import { Photo } from "model/Photo";
 
@@ -107,7 +107,7 @@ export function CardClub ({club, history} : PropsCardClub) {
             <CardContent style={{position: "relative"}}>
                 <div className={classes.divLogo}>
                     {logo ?
-                        <img className={classes.logo} src={`data:${logo.extension};base64,${logo.data}`} />
+                        <img alt="" className={classes.logo} src={`data:${logo.extension};base64,${logo.data}`} />
                     :
                         <Skeleton variant="circular" width="100%" height="100%"/>
                     }                

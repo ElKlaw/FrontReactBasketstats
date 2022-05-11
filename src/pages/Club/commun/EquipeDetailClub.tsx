@@ -1,13 +1,20 @@
-import { Alert, Divider, Grid } from "@material-ui/core";
+import { Alert, Divider, Grid, Snackbar, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { getEquipeById } from "api/EquipeService";
+import { getJoueursByEquipeId } from "api/JoueurService";
+import { getMatchsPasseByEquipeId, getMatchsFuturByEquipeId } from "api/MatchService";
 import { getPhotoById } from "api/PhotoService";
+import { CardJoueur } from "component/Joueur/CardJoueur";
 import { Lien } from "component/Link";
+import { TableauMatchFutur, TableauMatchPasse } from "component/Match/TableMatchs";
 import { Spinner } from "component/Spinner";
-import { percent, px } from "csx";
+import { px } from "csx";
 import { Equipe } from "model/Equipe";
+import { Joueur } from "model/Joueur";
+import { Match } from "model/Match";
 import { Photo } from "model/Photo";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { style } from "typestyle";
+import { groupMatchsByMonth } from "utils/Match/matchUtils";
 
 const cssPhoto = style({
     width: "100%",
@@ -21,17 +28,14 @@ const textePhotoAbsente = style({
     fontSize: px(20)
 })
 
-const blockPhoto = style({
-    width: percent(100),
-    height: px(80),
-    borderRadius: px(5),
-    textAlign: "center",
-    overflow: "hidden",
-    backgroundColor: "#A5A5A5",
-    color: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
+const buttonGroupDroit = style({
+    borderBottomRightRadius: px(20),
+    borderTopRightRadius: px(20)
+})
+
+const buttonGroupGauche = style({
+    borderBottomLeftRadius: px(20),
+    borderTopLeftRadius: px(20)
 })
 
 interface Props {
@@ -40,9 +44,30 @@ interface Props {
 }
 
 export function EquipeDetailClub({history, match} :Props) {
-    const [isLoading, setIsLoading] = React.useState<boolean>(true);
-    const [equipe, setEquipe] = React.useState<Equipe | undefined>(undefined);
-    const [photo, setPhoto] = React.useState<Photo | undefined>(undefined);
+    const idEquipe = history.location.pathname.split('/').pop()
+
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [equipe, setEquipe] = useState<Equipe | undefined>(undefined);
+    const [photo, setPhoto] = useState<Photo | undefined>(undefined);
+    
+    const [menu, setMenu] = useState<string>("futur");
+    const [matchsFutur, setMatchsFutur] = useState<Map<string, Array<Match>>>(new Map());
+    const [matchsPasse, setMatchsPasse] = useState<Map<string, Array<Match>>>(new Map());
+    
+    const [joueurs, setJoueurs] = useState<Array<Joueur>>([]);
+
+    const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
+    const [erreurSnackbar, setErreurSnackbar] = useState<string>("");
+
+    const getJoueurs = useCallback(() => {
+        getJoueursByEquipeId(idEquipe).then(res => {
+            setJoueurs(res)
+        })
+    }, [idEquipe])
+
+    useEffect(() => {
+        getJoueurs()
+    },[getJoueurs]);
 
     const getPhotos = () => { 
         const photoEquipe = equipe ? equipe.photo : undefined
@@ -60,36 +85,56 @@ export function EquipeDetailClub({history, match} :Props) {
         })
     }
 
-    React.useEffect(() => {
-        getEquipe(match.params.id)
-    }, [match])
+    const getMatchs = () => {
+        if(equipe) {
+            Promise.all([getMatchsPasseByEquipeId(equipe.id), getMatchsFuturByEquipeId(equipe.id)]).then(result => {
+                const matchsPasse : Array<Match> = result[0]
+                const matchsFutur : Array<Match> = result[1]
+                setMatchsFutur(groupMatchsByMonth(matchsFutur))
+                setMatchsPasse(groupMatchsByMonth(matchsPasse)) 
+            })
+        }
+    }
 
-    React.useEffect(() => {
+    useEffect(() => {
+        getEquipe(idEquipe)
+    }, [history])
+
+    useEffect(() => {
         getPhotos()
-      },[equipe]);
+        getMatchs()
+    },[equipe]);
+
+    const changeMenuCalendrier = (event: any, value: string) => {
+        setMenu(value);
+    };
 
 
     return (
-        <Grid container>
+        <Grid container spacing={1} style={{marginTop : 30}}>
             {isLoading ?
-                <Spinner /> 
+                <Grid item xs={12}>
+                    <Spinner />
+                </Grid>
             :
                 equipe ?
-                    <React.Fragment>
+                    <>
+                        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)} anchorOrigin={{vertical :'bottom', horizontal: 'center'}}>
+                            {erreurSnackbar !== "" ?
+                                <Alert onClose={() => setOpenSnackbar(false)} severity="error">
+                                    {erreurSnackbar}
+                                </Alert>
+                            :
+                                <Alert onClose={() => setOpenSnackbar(false)} severity="success">
+                                    Votre modification a été pris en compte.
+                                </Alert>
+                            }
+                        </Snackbar>
                         <Grid item xs={12}>
                           <Lien 
                             history={history}
                             label="< Retour"
                           />
-                        </Grid>
-                        <Grid item xs={4}>
-                            {photo ?
-                                <img src={`data:${photo.extension};base64,${photo.data}`} className={cssPhoto} />
-                            :
-                                <div className={cssPhoto}>
-                                <span className={textePhotoAbsente}>Photo</span>
-                                </div>
-                            }
                         </Grid>
                         <Grid item xs={8}>
                             <Grid container spacing={1}>
@@ -110,27 +155,74 @@ export function EquipeDetailClub({history, match} :Props) {
                                 </Grid>
                             </Grid>
                         </Grid>
+                        <Grid item xs={4}>
+                            {photo ?
+                                <img alt="" src={`data:${photo.extension};base64,${photo.data}`} className={cssPhoto} />
+                            :
+                                <div className={cssPhoto}>
+                                <span className={textePhotoAbsente}>Photo</span>
+                                </div>
+                            }
+                        </Grid>
                         <Grid item xs={12}>
                             <Divider />
                         </Grid>
                         <Grid item xs={12}>
                             <Grid container spacing={1}>
                                 <Grid item xs={12}>
-                                    <h1>Effectif de l'équipe</h1>
+                                    <h3>Effectif de l'équipe</h3>
                                 </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Grid container spacing={1}>
+                                {joueurs.map((joueur : Joueur) => (
+                                    <Grid item xs={2} key={joueur.id}>
+                                        <CardJoueur 
+                                            joueur={joueur} 
+                                            goTo={(value) => console.log(value)}
+                                        />
+                                    </Grid>
+                                ))}
                             </Grid>
                         </Grid>
                         <Grid item xs={12}>
                             <Divider />
                         </Grid>
-                        <Grid item xs={6}>
-                            <Grid container spacing={1}>
-                                <Grid item xs={12}>
-                                    <h1>Calendrier des matchs</h1>
-                                </Grid>
-                            </Grid>
+                        <Grid item xs={12}>
+                            <h3>Calendrier des matchs</h3>
                         </Grid>
-                    </React.Fragment>
+                        <Grid item xs={12} style={{textAlign: "center"}}>
+                            <ToggleButtonGroup value={menu} exclusive onChange={changeMenuCalendrier}>
+                                <ToggleButton  value="futur" className={buttonGroupGauche}>Matchs à venir</ToggleButton>
+                                <ToggleButton value="passe" className={buttonGroupDroit}>Matchs joués</ToggleButton>
+                            </ToggleButtonGroup>
+                        </Grid>
+                        <Grid item xs={12}>
+                            {  menu === "futur" ? 
+                                <TableauMatchFutur 
+                                    matchs={matchsFutur} 
+                                    validate={(value : boolean) => {
+                                        setOpenSnackbar(true)
+                                        setErreurSnackbar(value ? "" : "Oups une erreur est survenue. Veuillez réessayer plus tard.")
+                                        getMatchs()
+                                    }}
+                                />
+                            : 
+                                <TableauMatchPasse 
+                                    matchs={matchsPasse} 
+                                    validate={(value : boolean) => {
+                                        setOpenSnackbar(true)
+                                        setErreurSnackbar(value ? "" : "Oups une erreur est survenue. Veuillez réessayer plus tard.")
+                                        getMatchs()
+                                    }}
+                                />
+                            }
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Divider />
+                        </Grid>
+                    </>
                 :
                     <Grid item xs={12}>
                         <Alert severity="error">Oups une erreur est survenue. Veuillez réssayer</Alert>

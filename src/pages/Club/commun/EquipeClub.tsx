@@ -1,10 +1,10 @@
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { getEquipesByClubId } from "api/EquipeService";
 import { ButtonBase } from "component/Button";
 import { CardEquipe } from "component/Equipe/CardEquipe";
 import { Club } from "model/Club";
 import { Equipe } from "model/Equipe";
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect } from "react";
 import { FormulaireEquipe } from "pages/Formulaire/FormulaireEquipe";
 import CustomizedDialogs from "component/Dialog";
@@ -29,7 +29,7 @@ export function EquipeClub({club, history}: Props) {
     },[club]);
 
     const voirDetailEquipe = (equipe: Equipe) => {
-        history.push(`/club/${club.id}/equipe/${equipe.id}`)
+        history.push(`/club/${club.url}/equipe/${equipe.id}`)
     }
 
     return(
@@ -48,7 +48,7 @@ export function EquipeClub({club, history}: Props) {
                 </Grid>
             </Grid>
             {equipes.map((equipe : Equipe) => (
-                <Grid item xs={3}>
+                <Grid item xs={3} key={equipe.id}>
                     <CardEquipe 
                         equipe={equipe} 
                         goTo={voirDetailEquipe}

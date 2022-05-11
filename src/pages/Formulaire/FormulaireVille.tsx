@@ -1,4 +1,4 @@
-import { Button, Grid } from "@material-ui/core";
+import { Button, Grid } from "@mui/material";
 import { modifierVille } from "api/VilleService";
 import { ButtonBase } from "component/Button";
 import { TextFieldBase } from "component/TextField";

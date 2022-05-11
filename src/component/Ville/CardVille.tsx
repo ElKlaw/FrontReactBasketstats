@@ -1,9 +1,9 @@
-import { Button, Card, CardActions, CardContent, Grid} from "@material-ui/core";
+import { Button, Card, CardActions, CardContent, Grid} from "@mui/material";
 import { ButtonBase } from "component/Button";
 import { Ville } from "model/Ville";
 import { largeTexte, mediumTexte } from "style/text";
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface Props {
     ville: Ville

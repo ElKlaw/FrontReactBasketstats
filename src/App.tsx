@@ -8,7 +8,7 @@ import {
 import { Login } from './pages/Login';
 import { Inscription } from './pages/Inscription';
 import { AppBarCustom } from './component/AppBarCustom';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import { Footer } from './component/Footer';
 import allRoutes, { IRoute } from "./routing/index"
 

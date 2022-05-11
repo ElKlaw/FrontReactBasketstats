@@ -1,5 +1,5 @@
-import { Grid } from "@material-ui/core";
-import { Pagination } from "@material-ui/lab";
+import { Grid } from "@mui/material";
+import { Pagination } from '@mui/material';
 import React from "react";
 
 interface Props {

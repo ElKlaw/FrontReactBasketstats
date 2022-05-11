@@ -1,7 +1,7 @@
-import { Button } from "@material-ui/core";
-import { blueGrey, indigo, teal } from "@material-ui/core/colors";
+import { Button } from "@mui/material";
+import { blueGrey, indigo, teal } from "@mui/material/colors";
 
-import { withStyles } from "@material-ui/styles";
+import { withStyles } from "@mui/styles";
 import { important } from "csx";
 
 export const ButtonIndigo = withStyles((theme) => ({

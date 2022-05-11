@@ -2,7 +2,7 @@ import { Grid, ImageList, ImageListItem, IconButton, ImageListItemBar, Autocompl
 import { Formik } from "formik";
 import { Club } from "model/Club";
 import { Photo } from "model/Photo";
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import * as Yup from "yup"
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -13,7 +13,9 @@ import { style } from "typestyle";
 import { px } from "csx";
 import { OptionFormulaire } from "model/Formulaire";
 import { addPhoto } from "api/PhotoService";
-import { addEquipe } from "api/EquipeService";
+import { addJoueur } from "api/JoueurService";
+import { Equipe } from "model/Equipe";
+import { getEquipesByClubId } from "api/EquipeService";
 
 interface Props {
     club: Club
@@ -29,7 +31,8 @@ const divDepotFichier = style({
 
 // Formulaire
 const validation = Yup.object().shape({
-    nom: Yup.string().required("Veuillez renseigner un nom d'équipe."),
+    nom: Yup.string().required("Veuillez renseigner un nom."),
+    prenom: Yup.string().required("Veuillez renseigner un prénom."),
     sexe: Yup.object().shape({
         label: Yup.string(),
         value: Yup.string()
@@ -38,15 +41,14 @@ const validation = Yup.object().shape({
 
 const initialValues = {
     nom: "",
-    categorie: "",
+    prenom: "",
     sexe: undefined,
-    niveau: "",
-    division: "",
-    poule: "",
-    photo: null
+    photo: null,
+    equipes: []
 }
 
-export function FormulaireEquipe({club, onClose} : Props) {
+export function FormulaireJoueur({club, onClose} : Props) {
+  const [equipes, setEquipes] = React.useState<Array<Equipe>>([]);
     const [optionsSexe] = React.useState<Array<OptionFormulaire>>([
         {value: 1, label: "Masculin"},
         {value: 2, label: "Féminin"}
@@ -74,21 +76,40 @@ export function FormulaireEquipe({club, onClose} : Props) {
         }
     }
 
-    const validate = (values : any) => {
-        addPhoto(acceptedPhoto.length > 0 ? acceptedPhoto[0] : null).then(photo => {
-            const newEquipe = {
-                ...values,
-                photo: photo !== null ? photo.id : null,
-                sexe: values.sexe.label,
-                clubEquipe: {
-                    id: club.id
-                }
-            }
-            addEquipe(newEquipe).then(res => {
-                onClose()
-            })
+    const getEquipes = useCallback(() => {
+        getEquipesByClubId(club.id).then(equipes => {
+            setEquipes(equipes)
         })
+    },[club])
+
+    useEffect(() => {
+      getEquipes()
+    },[getEquipes]);
+
+
+    const validate = async (values : any) => {
+      let newJoueur = {
+        ...values,
+        photo: null,
+        sexe: values.sexe.label,
+        equipes: values.equipes,
+        clubs: [
+          {id: club.id}
+        ]
+      }
+      if(acceptedPhoto.length > 0) {
+        const photo = await addPhoto(acceptedPhoto[0])
+        newJoueur = {
+          ...newJoueur, 
+          photo
+        }
+      }
+      addJoueur(newJoueur).then(res => {
+          onClose()
+      })
     }
+
+    
 
     return (
         <Formik
@@ -101,15 +122,31 @@ export function FormulaireEquipe({club, onClose} : Props) {
         {({ handleSubmit, handleChange, handleBlur, setFieldValue, values, errors, touched }) => (
             <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12}>
+                    <Grid item xs={5}>
+                        <TextFieldBase
+                            id="prenom"
+                            type="text"
+                            size="small"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            label="Prénom *"
+                            placeholder="Veuillez entrer un prénom"
+                            value={values.prenom}
+                            variant="outlined"
+                            helperText={touched.prenom ? errors.prenom : ""}
+                            error={touched.prenom && Boolean(errors.prenom)}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={5}>
                         <TextFieldBase
                             id="nom"
                             type="text"
                             size="small"
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            label="Nom de l'équipe"
-                            placeholder="Veuillez entrer un nom d'équipe"
+                            label="Nom *"
+                            placeholder="Veuillez entrer un nom"
                             value={values.nom}
                             variant="outlined"
                             helperText={touched.nom ? errors.nom : ""}
@@ -117,23 +154,7 @@ export function FormulaireEquipe({club, onClose} : Props) {
                             fullWidth
                         />
                     </Grid>
-                    <Grid item xs={6}>
-                        <TextFieldBase
-                            id="categorie"
-                            type="text"
-                            size="small"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            label="Catégorie de l'équipe"
-                            placeholder="Veuillez entrer une catégorie pour l'équipe (exemple: Séniors, U20, ...)"
-                            value={values.categorie}
-                            variant="outlined"
-                            helperText={touched.categorie ? errors.categorie : ""}
-                            error={touched.categorie && Boolean(errors.categorie)}
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={2}>
                         <Autocomplete
                             id="sexe"
                             disableClearable
@@ -147,8 +168,8 @@ export function FormulaireEquipe({club, onClose} : Props) {
                             renderInput={(params) => 
                                 <TextFieldBase
                                     {...params}
-                                    label="Sexe de l'équipe"
-                                    placeholder="Veuillez entrer le sexe de l'équipe."
+                                    label="Sexe *"
+                                    placeholder="Veuillez entrer le sexe."
                                     variant="outlined"
                                     size="small"
                                     helperText={touched.sexe ? errors.sexe : ""}
@@ -159,57 +180,9 @@ export function FormulaireEquipe({club, onClose} : Props) {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextFieldBase
-                            id="niveau"
-                            type="text"
-                            size="small"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            label="Niveau de l'équipe"
-                            placeholder="Veuillez entrer le niveau de l'équipe (exemple: National, Régional, Départemental, ...)"
-                            value={values.niveau}
-                            variant="outlined"
-                            helperText={touched.niveau ? errors.niveau : ""}
-                            error={touched.niveau && Boolean(errors.niveau)}
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextFieldBase
-                            id="division"
-                            type="text"
-                            size="small"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            label="Division de l'équipe"
-                            placeholder="Veuillez entrer la division de l'équipe (exemple: 1, 2, ...)"
-                            value={values.division}
-                            variant="outlined"
-                            helperText={touched.division ? errors.division : ""}
-                            error={touched.division && Boolean(errors.division)}
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextFieldBase
-                            id="poule"
-                            type="text"
-                            size="small"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            label="Poule de l'équipe"
-                            placeholder="Veuillez entrer la poule de l'équipe (exemple: A, B, ...)"
-                            value={values.poule}
-                            variant="outlined"
-                            helperText={touched.poule ? errors.poule : ""}
-                            error={touched.poule && Boolean(errors.poule)}
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
                         <Grid container alignItems="center">
                             <Grid item xs={4}>
-                                <span>Photo de l'équipe</span>
+                                <span>Photo du joueur</span>
                             </Grid>
                             <Grid item xs={8}>
                                 {photo !== null ?
@@ -240,6 +213,31 @@ export function FormulaireEquipe({club, onClose} : Props) {
                                 }
                             </Grid>
                         </Grid>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Autocomplete
+                            id="equipes"
+                            multiple
+                            options={equipes}
+                            getOptionLabel={(option) => option.nom}
+                            onChange={(e, value) => {
+                                setFieldValue("equipes", value)
+                            }}
+                            onBlur={handleBlur}
+                            value={values.equipes}
+                            renderInput={(params) => 
+                                <TextFieldBase
+                                    {...params}
+                                    label="Équipes"
+                                    placeholder="Veuillez les équipes du joueur"
+                                    variant="outlined"
+                                    size="small"
+                                    helperText={touched.equipes ? errors.equipes : ""}
+                                    error={touched.equipes && Boolean(errors.equipes)}
+                                    fullWidth
+                                />
+                            }
+                        />
                     </Grid>
                     <Grid item xs={6}>
                         <Button 

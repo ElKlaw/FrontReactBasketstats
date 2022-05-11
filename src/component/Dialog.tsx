@@ -1,12 +1,13 @@
 import React from 'react';
-import { createStyles, Dialog, IconButton, Theme } from '@material-ui/core';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
+import { Dialog, IconButton, Theme } from '@mui/material';
+import createStyles from '@mui/styles/createStyles';
+import MuiDialogTitle from '@mui/material/DialogTitle';
+import MuiDialogContent from '@mui/material/DialogContent';
+import MuiDialogActions from '@mui/material/DialogActions';
 
-import CloseIcon from '@material-ui/icons/Close';
-import { withStyles, WithStyles } from '@material-ui/styles';
-import { grey } from '@material-ui/core/colors';
+import CloseIcon from '@mui/icons-material/Close';
+import { withStyles, WithStyles } from '@mui/styles';
+import { grey } from '@mui/material/colors';
 
 const styles = () =>
   createStyles({
@@ -29,14 +30,18 @@ interface DialogTitleProps extends WithStyles<typeof styles> {
 const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
     const { children, classes, onClose, ...other } = props;
     return (
-      <MuiDialogTitle className={classes.root} {...other}>
-        {children}
-        {onClose ? (
-          <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
-        ) : null}
-      </MuiDialogTitle>
+        <MuiDialogTitle className={classes.root} {...other}>
+          {children}
+          {onClose ? (
+            <IconButton
+                aria-label="close"
+                className={classes.closeButton}
+                onClick={onClose}
+                size="large">
+              <CloseIcon />
+            </IconButton>
+          ) : null}
+        </MuiDialogTitle>
     );
 });
 
@@ -45,7 +50,7 @@ const DialogContent = withStyles((theme: Theme) => ({
       padding: 20,
     },
 }))(MuiDialogContent);
-  
+
 const DialogActions = withStyles((theme: Theme) => ({
     root: {
         margin: 0,

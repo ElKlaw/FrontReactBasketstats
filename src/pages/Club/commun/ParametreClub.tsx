@@ -1,5 +1,5 @@
-import { Accordion, AccordionDetails, AccordionSummary, Alert, Grid, Snackbar } from "@material-ui/core";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary, Alert, Grid, Snackbar } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Club } from "model/Club";
 import React from "react";
 import { FormulaireEsthetique } from "../Parametre/FormulaireEsthetique";

@@ -1,20 +1,21 @@
-import { Autocomplete, Button, Checkbox, Grid, TextField } from "@material-ui/core";
+import { Autocomplete, Button, Checkbox, Grid, TextField } from "@mui/material";
 import { Equipe } from "model/Equipe";
 import * as Yup from "yup"
 import { Formik } from "formik"
 import { TextFieldBase } from "component/TextField";
 import { Club } from "model/Club";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import React from "react";
 import { getEquipesByClubId } from "api/EquipeService";
 import { OptionFormulaire } from "model/Formulaire";
-import { FormControlLabel } from "@material-ui/core";
-import { DatePicker, TimePicker } from "@material-ui/lab";
+import { FormControlLabel } from "@mui/material";
+import { DatePicker, TimePicker } from "@mui/lab";
 import { ButtonBase } from "component/Button";
 import { AutocompleteSalle } from "component/AutocompleteSalle";
 import { AutocompleteAdresse } from "component/AutocompleteAdresse";
 import { addMatch } from "api/MatchService";
 import moment from "moment";
+import { ajouterAdresse } from "api/AdresseService";
 
 const validation = Yup.object().shape({
     dateMatch: Yup.object().shape({
@@ -55,22 +56,23 @@ const initialValues = {
 interface Props {
     club : Club
     onClose : () => void
+    validate: (value: boolean) => void
 }
 
-export function FormulaireMatch({club, onClose} : Props) {
+export function FormulaireMatch({club, onClose, validate} : Props) {
     const [optionsEquipe, setOptionsEquipe] = React.useState<Array<OptionFormulaire>>([]);
     
-    const getEquipes = () => {
+    const getEquipes = useCallback(() => {
         getEquipesByClubId(club.id).then((equipes : Array<Equipe>) => {
             setOptionsEquipe(equipes.map(el =>({value: el.id, label: el.nom})))
         })
-    }
+    }, [club])
 
     useEffect(() => {
         getEquipes()
-    },[club]);
+    },[getEquipes]);
     
-    const validate = (values : any) => {
+    const ajouterMatch = (values : any) => {
         if(values.domicile) {
             const matchs : any = {
                 dateMatch: values.dateMatch,
@@ -91,10 +93,41 @@ export function FormulaireMatch({club, onClose} : Props) {
                 adresseMatch: null
             }
             addMatch(matchs).then(res => {
+                validate(true)
                 onClose()
+            }).catch(err => {
+                validate(false)
             })
         } else {
-
+            const promisesAdresse = []
+            promisesAdresse.push(values.lieuRdv !== null ? ajouterAdresse(values.lieuRdv) : Promise.resolve(null))
+            promisesAdresse.push(values.lieuMatch !== null ? ajouterAdresse(values.lieuMatch) : Promise.resolve(null))
+            Promise.all(promisesAdresse).then(res => {
+                const matchs : any = {
+                    dateMatch: values.dateMatch,
+                    domicile: values.domicile,
+                    heureMatch: moment(values.heureMatch).format('HH:mm'),
+                    heureRDV: moment(values.heureRDV).format('HH:mm'),
+                    adversaire: values.adversaire,
+                    scoreEquipe: null,
+                    scoreAdversaire: null,
+                    infosSup: values.infosSup,
+                    equipe: {
+                        id: values.equipe.value
+                    },
+                    adresseRdv: res[0] !== null ? res[0].id : null,
+                    salleMatch: null, 
+                    adresseMatch: res[1] !== null ? res[1].id :null
+                }
+                addMatch(matchs).then(res => {
+                    validate(true)
+                    onClose()
+                }).catch(err => {
+                    validate(false)
+                })
+            }).catch(err => {
+                validate(false)
+            })
         }
     }
 
@@ -103,7 +136,7 @@ export function FormulaireMatch({club, onClose} : Props) {
             initialValues={initialValues}
             validationSchema={validation}
             onSubmit={(values, { resetForm }) => {
-                validate(values)
+                ajouterMatch(values)
             }}
         >
         {({ handleSubmit, handleChange, handleBlur, setFieldValue, values, errors, touched }) => (
@@ -272,7 +305,7 @@ export function FormulaireMatch({club, onClose} : Props) {
                             rows={4}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            label={"infosSup"}
+                            label={"Informations supplémentaires"}
                             value={values.infosSup}
                             variant="outlined"
                             helperText={touched.infosSup ? errors.infosSup : ""}

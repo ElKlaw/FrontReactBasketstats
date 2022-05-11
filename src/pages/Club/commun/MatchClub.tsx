@@ -1,48 +1,16 @@
-import { Grid, ToggleButton, ToggleButtonGroup } from "@material-ui/core";
+import { Alert, Grid, Snackbar, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { getMatchsFuturByClubId, getMatchsPasseByClubId } from "api/MatchService";
 import { ButtonBase } from "component/Button";
 import CustomizedDialogs from "component/Dialog";
-import { percent, px } from "csx";
+import { px } from "csx";
 import { Club } from "model/Club";
 import { Match } from "model/Match";
-import moment from "moment";
 import { FormulaireMatch } from "pages/Formulaire/FormulaireMatch";
-import React, { useEffect } from "react";
-import { classes, style } from "typestyle";
+import React, { useCallback, useEffect } from "react";
+import { style } from "typestyle";
 import { groupMatchsByMonth } from "utils/Match/matchUtils";
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-
-const table = style({
-    width: percent(100)
-})
-
-const headerTable = style({
-    backgroundColor: "#9e9e9e",
-    color: "#FFF",
-    height: px(26),
-    textAlign: "left"
-})
-
-const cellHeader = style({
-    paddingLeft: px(10),
-    paddingTop: px(7),
-    paddingBottom: px(7),
-    fontWeight: 500,
-})
-
-const cellHeaderMois = style({
-    backgroundColor: "#dadada"
-})
-
-const cellBody = style({
-    paddingLeft: px(10),
-    fontWeight: 500
-})
-
-const moisLigne = style({
-    backgroundColor: "#dadada",
-    color: "#444"
-})
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { TableauMatchFutur, TableauMatchPasse } from "component/Match/TableMatchs";
 
 const buttonGroupDroit = style({
     borderBottomRightRadius: px(20),
@@ -59,22 +27,25 @@ interface Props {
     resfresh: () => void
 }
 
+
+
 export function MatchClub({club}: Props) {
     const [isOpenModalCreation, setIsOpenModalCreation] = React.useState<boolean>(false);
     const [menu, setMenu] = React.useState<string>("futur");
-    const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [matchsFutur, setMatchsFutur] = React.useState<Map<string, Array<Match>>>(new Map());
     const [matchsPasse, setMatchsPasse] = React.useState<Map<string, Array<Match>>>(new Map());
     
-    const getMatchs = () => {
+    const [openSnackbar, setOpenSnackbar] = React.useState<boolean>(false);
+    const [erreurSnackbar, setErreurSnackbar] = React.useState<string>("");
+    
+    const getMatchs = useCallback(() => {
         Promise.all([getMatchsPasseByClubId(club.id), getMatchsFuturByClubId(club.id)]).then(result => {
             const matchsPasse : Array<Match> = result[0]
             const matchsFutur : Array<Match> = result[1]
             setMatchsFutur(groupMatchsByMonth(matchsFutur))
             setMatchsPasse(groupMatchsByMonth(matchsPasse))
-            setIsLoading(false)     
         })
-    }
+    }, [club])
 
     const changeMenu = (event: any, value: string) => {
         setMenu(value);
@@ -82,109 +53,21 @@ export function MatchClub({club}: Props) {
 
     useEffect(() => {
         getMatchs()
-    },[club]);
-
-    const getTableauMatchFutur = ( matchsMonth: Map<string, Array<Match>> ) => {
-        const keys = Array.from(matchsMonth.keys())
-        return(
-            <table className={table} cellSpacing={0}>
-                <thead className={headerTable}>
-                    <tr>
-                        <th className={cellHeader}>Date</th>
-                        <th className={cellHeader}>Heure</th>
-                        <th className={cellHeader}>Lieu</th>
-                        <th className={cellHeader}>Equipe</th>
-                        <th className={cellHeader}>Adversaire</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {keys.length > 0 ?
-                        keys.map((mois : any) =>(
-                            <React.Fragment>
-                                <tr>
-                                    <td colSpan={5} className={classes(cellHeader, cellHeaderMois)}>{mois}</td>
-                                </tr>
-                                {matchsMonth.get(mois)?.map(match =>(
-                                    <tr>
-                                        <td className={cellBody}>{moment(match.dateMatch).format('DD/MM/YY')}</td>
-                                        <td className={cellBody}>{match.heureMatch}</td>
-                                        <td className={cellBody}>
-                                            {match.domicile ? match.salleMatch?.nom : match.adresseMatch?.ville }
-                                        </td>
-                                        <td className={cellBody}>{match.equipe.nom}</td>
-                                        <td className={cellBody}>{match.adversaire}</td>
-                                    </tr>
-                                ))}
-                            </React.Fragment>
-                        ))
-                    :
-                        <tr>
-                            <td colSpan={5} className={cellHeader}>Aucun match à venir</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        )
-    }
-
-    const getTableauMatchPasse = ( matchsMonth: Map<string, Array<Match>> ) => {
-        const keys = Array.from(matchsMonth.keys())
-        return(
-            <table className={table} cellSpacing={0}>
-                <thead className={headerTable}>
-                    <tr>
-                        <th className={cellHeader}>Date</th>
-                        <th className={cellHeader}>Heure</th>
-                        <th className={cellHeader}>Equipe</th>
-                        <th className={cellHeader}>Adversaire</th>
-                        <th className={cellHeader}>Résultat</th>
-                        <th className={cellHeader}>Score</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {keys.length > 0 ?
-                        keys.map((mois : any) =>(
-                            <React.Fragment>
-                                <tr className={moisLigne} >
-                                    <td colSpan={6} className={cellHeader}>{mois}</td>
-                                </tr>
-                                {matchsMonth.get(mois)?.map(match =>(
-                                    <tr>
-                                        <td className={cellBody}>{moment(match.dateMatch).format('DD/MM/YY')}</td>
-                                        <td className={cellBody}>{match.heureMatch}</td>
-                                        <td className={cellBody}>{match.equipe.nom}</td>
-                                        <td className={cellBody}>{match.adversaire}</td>
-                                        {match.scoreEquipe !== null && match.scoreAdversaire !== null ?
-                                            <React.Fragment>
-                                                <td className={cellBody}>{match.scoreEquipe > match.scoreAdversaire ? "Victoire" : "Défaite"}</td>
-                                                <td className={cellBody}>
-                                                    <span>{match.scoreEquipe}</span>
-                                                    <span> - </span>
-                                                    <span>{match.scoreAdversaire}</span>
-                                                </td>
-                                            </React.Fragment>
-                                        :
-                                            <React.Fragment>
-                                                <td />
-                                                <td className={cellBody}>Ajouter un score</td>
-                                            </React.Fragment>
-                                        }
-                                    </tr>
-                                ))}
-                            </React.Fragment>
-                        ))
-                    :
-                        <tr>
-                            <td colSpan={6} className={cellHeader}>Aucun match à venir</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        )
-    }
+    },[getMatchs]);
 
     return(
         <Grid container spacing={1}>
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)} anchorOrigin={{vertical :'bottom', horizontal: 'center'}}>
+                {erreurSnackbar !== "" ?
+                    <Alert onClose={() => setOpenSnackbar(false)} severity="error">
+                        {erreurSnackbar}
+                    </Alert>
+                :
+                    <Alert onClose={() => setOpenSnackbar(false)} severity="success">
+                        Votre modification a été pris en compte.
+                    </Alert>
+                }
+            </Snackbar>
             <Grid item xs={12}>
                 <Grid container spacing={1} justifyContent="center">
                     <Grid item xs={4}>
@@ -206,9 +89,23 @@ export function MatchClub({club}: Props) {
             </Grid>
             <Grid item xs={12}>
                 {  menu === "futur" ? 
-                    getTableauMatchFutur(matchsFutur)
+                    <TableauMatchFutur 
+                        matchs={matchsFutur} 
+                        validate={(value : boolean) => {
+                            setOpenSnackbar(true)
+                            setErreurSnackbar(value ? "" : "Oups une erreur est survenue. Veuillez réessayer plus tard.")
+                            getMatchs()
+                        }}
+                    />
                 : 
-                    getTableauMatchPasse(matchsPasse)
+                    <TableauMatchPasse 
+                        matchs={matchsPasse} 
+                        validate={(value : boolean) => {
+                            setOpenSnackbar(true)
+                            setErreurSnackbar(value ? "" : "Oups une erreur est survenue. Veuillez réessayer plus tard.")
+                            getMatchs()
+                        }}
+                    />
                 }
             </Grid>
             <CustomizedDialogs 
@@ -221,12 +118,17 @@ export function MatchClub({club}: Props) {
                     <FormulaireMatch 
                         onClose={()=> {
                             setIsOpenModalCreation(false)
+                        }}
+                        validate={res => {
+                            setOpenSnackbar(true)
+                            setErreurSnackbar(res ? "" : "Oups une erreur est survenue. Veuillez réessayer plus tard.")
                             getMatchs()
                         }}
                         club={club}
                     />
                 }
             />
+
         </Grid>
     )
 }

@@ -1,11 +1,11 @@
-import { Grid, Paper, Typography } from "@material-ui/core";
+import { Grid, Paper, Typography } from "@mui/material";
 import React from "react";
 
-import CopyrightIcon from '@material-ui/icons/Copyright';
+import CopyrightIcon from '@mui/icons-material/Copyright';
 
-import YouTubeIcon from '@material-ui/icons/YouTube';
-import InstagramIcon from '@material-ui/icons/Instagram';
-import TwitterIcon from '@material-ui/icons/Twitter';
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import TwitterIcon from '@mui/icons-material/Twitter';
 import { style } from "typestyle";
 
 const iconReseau = style({

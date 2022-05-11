@@ -5,8 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'moment/locale/fr'
 import moment from "moment"
-import { LocalizationProvider } from '@material-ui/lab';
-import AdapterMoment from '@material-ui/lab/AdapterMoment';
+import { LocalizationProvider } from '@mui/lab';
+import AdapterMoment from '@mui/lab/AdapterMoment';
 
 moment().locale('fr')
 

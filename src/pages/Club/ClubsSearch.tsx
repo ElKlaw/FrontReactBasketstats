@@ -1,14 +1,14 @@
-import { Container, Grid, InputAdornment, Typography } from "@material-ui/core";
+import { Container, Grid, InputAdornment, Typography } from "@mui/material";
 import { url } from "csx";
 import React from "react";
 import { style } from "typestyle";
 import { searchClub } from "../../api/ClubService";
 import { Club } from "../../model/Club";
 import imagefond from "../../ressources/fond.jpg";
-import SearchIcon from '@material-ui/icons/Search';
+import SearchIcon from '@mui/icons-material/Search';
 import { TextFieldBase } from "../../component/TextField";
 import { PaginationBase } from "../../component/Pagination";
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { ButtonBase } from "../../component/Button";
 import { CardClub } from "component/Club/CardClub";
 

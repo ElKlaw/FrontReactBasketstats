@@ -1,16 +1,15 @@
-import * as React from 'react';
-import Box from '@material-ui/core/Box';
-import Autocomplete from '@material-ui/core/Autocomplete';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import Grid from '@material-ui/core/Grid';
-import { CircularProgress } from '@material-ui/core';
+import Box from '@mui/material/Box';
+import Autocomplete from '@mui/material/Autocomplete';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Grid from '@mui/material/Grid';
+import { CircularProgress } from '@mui/material';
 import { classes, style } from 'typestyle';
 import { px } from 'csx';
 import { TextFieldBase } from './TextField';
 import { Salle } from 'model/Salle';
 import { getSalleByClubId } from 'api/SalleService';
 import { Club } from 'model/Club';
-import { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 const titleTextOption = style({
   fontWeight : 700
@@ -33,19 +32,19 @@ interface Props {
 }
 
 export function AutocompleteSalle({label, placeholder, club, value, helperText, error, handleBlur, onChange} : Props) {
-  const [loading, setLoading] = React.useState<boolean>(true)
-  const [options, setOptions] = React.useState<Array<Salle>>([]);
+  const [loading, setLoading] = useState<boolean>(true)
+  const [options, setOptions] = useState<Array<Salle>>([]);
   
-  const getSalles = () => {
+  const getSalles = useCallback(() => {
     getSalleByClubId(club.id).then(res => {
       setOptions(res)
       setLoading(false)
     })
-  }
+  }, [])
 
   useEffect(() => {
     getSalles()
-  },[]);
+  },[getSalles]);
 
   return (
     <Autocomplete
@@ -73,9 +72,9 @@ export function AutocompleteSalle({label, placeholder, club, value, helperText, 
           InputProps={{
             ...params.InputProps,
             endAdornment: (
-              <React.Fragment>
+              <>
                 {loading ? <CircularProgress color="inherit" size={20} /> : params.InputProps.endAdornment}
-              </React.Fragment>
+              </>
             ),
           }}
         />

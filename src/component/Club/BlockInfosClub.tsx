@@ -1,4 +1,4 @@
-import { Grid, Paper } from "@material-ui/core";
+import { Grid, Paper } from "@mui/material";
 import { Club } from "model/Club";
 import { Ville } from "model/Ville";
 import React from "react";
@@ -35,7 +35,7 @@ export function BlockInfosClub({club}: Props){
                 <Grid item xs={12}>
                     <span className={titreInfos}>Ville : </span>
                     {club.villes.map((ville: Ville, index: number) => (
-                        <span>{ville.nom} ({ville.codePostal}) {club.villes.length > index+1 ? ', ' : ''}</span>
+                        <span key={index}>{ville.nom} ({ville.codePostal}) {club.villes.length > index+1 ? ', ' : ''}</span>
                     ))}
                 </Grid>
             </Grid>

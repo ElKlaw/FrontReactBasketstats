@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Grid, IconButton, ImageList, ImageListItemBar, Paper } from "@material-ui/core";
+import { Autocomplete, Button, Grid, IconButton, ImageList, ImageListItemBar, Paper } from "@mui/material";
 import * as Yup from "yup"
 import { Formik } from "formik"
 import { TextFieldBase } from "component/TextField";
@@ -9,8 +9,8 @@ import { useDropzone } from "react-dropzone";
 import { Photo } from "model/Photo";
 import { style } from "typestyle";
 import { px } from "csx";
-import { ImageListItem } from "@material-ui/core";
-import DeleteIcon from '@material-ui/icons/Delete';
+import { ImageListItem } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { ButtonBase } from "component/Button";
 import { Sport } from "model/Sport";
 import { addPhoto } from "api/PhotoService";
@@ -305,6 +305,7 @@ export function FormulaireClub({history} : Props) {
                                                 <ImageList rowHeight={250} cols={1}>
                                                     <ImageListItem cols={1}>
                                                         <img 
+                                                            alt=""
                                                             src={photoFont.data}
                                                             style={{maxHeight: 250}}
                                                         />
@@ -314,7 +315,7 @@ export function FormulaireClub({history} : Props) {
                                                                 <IconButton
                                                                     style={{ color : "white"}}
                                                                     onClick={() => setPhotoFont(null)}
-                                                                >
+                                                                    size="large">
                                                                     <DeleteIcon />
                                                                 </IconButton>
                                                             }
@@ -342,6 +343,7 @@ export function FormulaireClub({history} : Props) {
                                                 <ImageList rowHeight={250} cols={2}>
                                                     <ImageListItem cols={1}>
                                                         <img 
+                                                            alt=""
                                                             src={photoLogo.data}
                                                             style={{maxHeight: 250}}
                                                         />
@@ -351,7 +353,7 @@ export function FormulaireClub({history} : Props) {
                                                                 <IconButton
                                                                     style={{ color : "white"}}
                                                                     onClick={() => setPhotoLogo(null)}
-                                                                >
+                                                                    size="large">
                                                                     <DeleteIcon />
                                                                 </IconButton>
                                                             }
@@ -394,6 +396,6 @@ export function FormulaireClub({history} : Props) {
                 </Paper>
             </Grid>
         </Grid>
-    )
+    );
 
 }

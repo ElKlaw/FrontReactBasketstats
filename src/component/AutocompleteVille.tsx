@@ -1,10 +1,10 @@
 import * as React from 'react';
-import Box from '@material-ui/core/Box';
-import Autocomplete from '@material-ui/core/Autocomplete';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import Grid from '@material-ui/core/Grid';
+import Box from '@mui/material/Box';
+import Autocomplete from '@mui/material/Autocomplete';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Grid from '@mui/material/Grid';
 import { getVille } from '../api/DataGouvService';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress } from '@mui/material';
 import { classes, style } from 'typestyle';
 import { px } from 'csx';
 import { useDebouncedEffect } from '../utils/CustomHooks';

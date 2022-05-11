@@ -1,4 +1,4 @@
-import { Grid, Paper } from "@material-ui/core";
+import { Grid, Paper } from "@mui/material";
 import { getMatchsFuturByClubId, getMatchsPasseByClubId } from "api/MatchService";
 import { BlockInfosClub } from "component/Club/BlockInfosClub";
 import { BlockMatchs } from "component/Match/BlockMatchs";
@@ -13,7 +13,6 @@ interface Props {
 }
 
 export function AccueilClub({club} :Props) {
-    const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [matchsFutur, setMatchsFutur] = React.useState<Array<Match>>([]);
     const [matchsPasse, setMatchsPasse] = React.useState<Array<Match>>([]);
     
@@ -22,8 +21,7 @@ export function AccueilClub({club} :Props) {
             const matchsPasse : Array<Match> = result[0]
             const matchsFutur : Array<Match> = result[1]
             setMatchsFutur(matchsFutur)
-            setMatchsPasse(matchsPasse)
-            setIsLoading(false)     
+            setMatchsPasse(matchsPasse) 
         })
     }
 

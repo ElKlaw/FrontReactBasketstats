@@ -11,11 +11,21 @@ export function fetchApi(url: string, options: any) {
     return fetch(apiUrl + url,{
         headers,
         ...options
-    }).then(res=> res.json())
+    }).then(res => checkStatus(res)).then(res=> res.json())
 }
 
 export function fetchApiImage(url: string, options: any) {
     return fetch(apiUrl + url,{
         ...options
-    }).then(res => res.json())
+    })
+    .then(res => checkStatus(res)).then(res => res.json())
+}
+
+
+function checkStatus(response: any) {
+    if (response.status >= 200 && response.status < 300) {
+      return response
+    } else {
+      throw response
+    }
 }

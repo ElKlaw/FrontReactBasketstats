@@ -1,10 +1,10 @@
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { ButtonBase } from "component/Button";
 import { CardSalle } from "component/Salle/CardSalle";
 import { Club } from "model/Club";
 import React from "react";
 import { trierByNom } from "utils/triee";
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Salle } from "model/Salle";
 import CustomizedDialogs from "component/Dialog";
 import { FormulaireSalle } from "pages/Formulaire/FormulaireSalle";

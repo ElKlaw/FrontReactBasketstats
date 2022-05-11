@@ -1,4 +1,4 @@
-import { Button, Grid } from "@material-ui/core";
+import { Button, Grid } from "@mui/material";
 import { ajouterSalle, modifierSalle } from "api/SalleService";
 import { AutocompleteAdresse } from "component/AutocompleteAdresse";
 import { ButtonBase } from "component/Button";

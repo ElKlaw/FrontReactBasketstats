@@ -1,4 +1,4 @@
-import { Box, Grid, Paper } from "@material-ui/core";
+import { Box, Grid, Paper } from "@mui/material";
 import { SmallTab, SmallTabs } from "component/Tabs";
 import { Match } from "model/Match";
 import React from "react";
@@ -52,7 +52,7 @@ function TabPanelMatchFutur({value, index, matchs} : PropsTab) {
             <Grid container spacing={1}>
                 {matchs.length >0 ?
                     matchs.map((match: Match) => (
-                        <Grid item xs={12}>
+                        <Grid item xs={12} key={match.id}>
                             <BlockFuturMatchTab match={match} />
                         </Grid>
                     ))

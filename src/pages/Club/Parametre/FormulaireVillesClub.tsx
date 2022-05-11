@@ -1,10 +1,10 @@
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import CustomizedDialogs from "component/Dialog";
 import { CardVille } from "component/Ville/CardVille";
 import { Club } from "model/Club";
 import { FormulaireVille } from "pages/Formulaire/FormulaireVille";
 import React from "react";
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { ButtonBase } from "component/Button";
 import { Ville } from "model/Ville";
 import { AutocompleteVille } from "component/AutocompleteVille";

@@ -19,9 +19,9 @@ export function isScoreSaisie(match: Match) {
     return scoreAdversaire !== null && scoreEquipe !== null ? true : false
 }
 
-export function groupMatchsByMonth(matchs : Array<Match>){
+export function groupMatchsByMonth(matchs : Array<Match>) : Map<string, Array<Match>>{
     let listMatchByMonth = new Map();
-    matchs.map((match : Match) =>{
+    matchs.forEach((match : Match) =>{
         const monthMatch = moment(match.dateMatch,'YYYY-MM-DD').format('MMMM');
         if(listMatchByMonth.get(monthMatch)){
             let eventsOfMonth = listMatchByMonth.get(monthMatch);
@@ -34,6 +34,6 @@ export function groupMatchsByMonth(matchs : Array<Match>){
         }
     })
     return listMatchByMonth;
-  }
+}
 
 

@@ -1,8 +1,8 @@
-import { Button, Grid, IconButton, ImageList, ImageListItem, ImageListItemBar } from "@material-ui/core";
+import { Button, Grid, IconButton, ImageList, ImageListItem, ImageListItemBar } from "@mui/material";
 import { ButtonBase } from "component/Button";
 import { Formik } from "formik";
 import { Club } from "model/Club";
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@mui/icons-material/Delete';
 import * as Yup from "yup";
 import { modifierClub } from "api/ClubService";
 import React from "react";
@@ -194,6 +194,7 @@ export function FormulaireEsthetique({club, validate} :Props) {
                                     <ImageList rowHeight={250} cols={1}>
                                         <ImageListItem cols={1}>
                                             <img 
+                                                alt=""
                                                 src={isFontLocal ? photoFont.data : `data:${photoFont.extension};base64,${photoFont.data}`}
                                                 style={{maxHeight: 250}}
                                             />
@@ -203,7 +204,7 @@ export function FormulaireEsthetique({club, validate} :Props) {
                                                     <IconButton
                                                         style={{ color : "white"}}
                                                         onClick={() => setPhotoFont(null)}
-                                                    >
+                                                        size="large">
                                                         <DeleteIcon />
                                                     </IconButton>
                                                 }
@@ -231,6 +232,7 @@ export function FormulaireEsthetique({club, validate} :Props) {
                                     <ImageList rowHeight={250} cols={2}>
                                         <ImageListItem cols={1}>
                                             <img 
+                                                alt=""
                                                 src={isLogoLocal? photoLogo.data : `data:${photoLogo.extension};base64,${photoLogo.data}`}
                                                 style={{maxHeight: 250}}
                                             />
@@ -240,7 +242,7 @@ export function FormulaireEsthetique({club, validate} :Props) {
                                                     <IconButton
                                                         style={{ color : "white"}}
                                                         onClick={() => setPhotoLogo(null)}
-                                                    >
+                                                        size="large">
                                                         <DeleteIcon />
                                                     </IconButton>
                                                 }
@@ -279,5 +281,5 @@ export function FormulaireEsthetique({club, validate} :Props) {
             </form>
         )}
         </Formik>
-    )
+    );
 }

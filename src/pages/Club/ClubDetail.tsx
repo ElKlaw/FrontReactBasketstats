@@ -1,4 +1,4 @@
-import { Alert, Grid, Skeleton } from "@material-ui/core";
+import { Alert, Grid, Skeleton } from "@mui/material";
 import { getPhotoById } from "api/PhotoService";
 import { Spinner } from "component/Spinner";
 import { TabBase, TabsBase } from "component/Tabs";
@@ -56,7 +56,7 @@ export class ClubDetail extends React.Component<Props, States> {
             imagefont: undefined,
             imageLogo: undefined,
             isLoadingImage: true,
-            menu: props.history.location.pathname.split('/').pop()
+            menu: props.history.location.pathname.split('/')[3]
         }
     }
 
@@ -114,7 +114,7 @@ export class ClubDetail extends React.Component<Props, States> {
                                     {isLoadingImage || imagefont === undefined ?
                                         <Skeleton variant="rectangular" width="100%" height={300} />
                                     :
-                                        <img src={`data:${imagefont.extension};base64,${imagefont.data}`} className={classImageFond}/>
+                                        <img alt="" src={`data:${imagefont.extension};base64,${imagefont.data}`} className={classImageFond}/>
                                     }
                                 </Grid>
                             }
@@ -126,7 +126,7 @@ export class ClubDetail extends React.Component<Props, States> {
                                         {isLoadingImage || imageLogo === undefined ?
                                             <Skeleton variant="circular" width="100%" height="100%" />
                                         :
-                                            <img src={`data:${imageLogo.extension};base64,${imageLogo.data}`} className={classImageLogo}/>
+                                            <img alt="" src={`data:${imageLogo.extension};base64,${imageLogo.data}`} className={classImageLogo}/>
                                         }
                                     </div>
                                     
@@ -134,6 +134,7 @@ export class ClubDetail extends React.Component<Props, States> {
                                 <TabsBase
                                     value={menu}
                                     onChange={this.changeMenu}
+                                    centered
                                 >
                                     <TabBase label="Accueil" value="accueil"/>
                                     <TabBase label="Équipe" value="equipe"/>

@@ -1,5 +1,5 @@
-import { Card, CardActions, CardContent, CardMedia, Skeleton } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
+import { Card, CardActions, CardContent, CardMedia, Skeleton } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { getPhotoById } from "api/PhotoService";
 import { ButtonBase } from "component/Button";
 import { Equipe } from "model/Equipe";

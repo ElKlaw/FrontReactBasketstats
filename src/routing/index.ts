@@ -8,7 +8,7 @@ export interface IRoute {
     component: any
 }
 
-export default [
+const routes = [
     {
         url : "/",
         exact: true,
@@ -17,3 +17,5 @@ export default [
     ...routesClub,
     ...routeMatch
 ]
+
+export default routes

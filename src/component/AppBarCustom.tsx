@@ -1,9 +1,9 @@
 import React from "react";
-import { AppBar, Avatar, Badge, Grid, IconButton, Toolbar, Typography } from "@material-ui/core";
-import { blueGrey, red } from "@material-ui/core/colors";
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import { Link } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
+import { AppBar, Avatar, Badge, Grid, IconButton, Toolbar, Typography } from "@mui/material";
+import { blueGrey, red } from "@mui/material/colors";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import { Link } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { px } from "csx";
 
 interface Props {
@@ -65,14 +65,14 @@ export function AppBarCustom({isConnect, history}: Props) {
                             {isConnect ?
                                 <React.Fragment>
                                     <Grid item>
-                                        <IconButton className={classes.avatar}>
+                                        <IconButton className={classes.avatar} size="large">
                                             <Badge badgeContent={17} color="secondary">
                                                 <NotificationsIcon />
                                             </Badge>
                                         </IconButton>
                                     </Grid>
                                     <Grid item>
-                                        <IconButton className={classes.avatar}>
+                                        <IconButton className={classes.avatar} size="large">
                                             <Avatar>H</Avatar>
                                         </IconButton>
                                     </Grid>
@@ -93,5 +93,5 @@ export function AppBarCustom({isConnect, history}: Props) {
                 </Grid>
             </Toolbar>
         </AppBar>
-    )
+    );
 }

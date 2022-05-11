@@ -1,5 +1,5 @@
-import { AppBar } from "@material-ui/core";
-import { blueGrey, teal } from "@material-ui/core/colors";
+import { AppBar } from "@mui/material";
+import { blueGrey, teal } from "@mui/material/colors";
 import { border, important, px } from "csx";
 import React from "react";
 import { NavLink } from 'react-router-dom'

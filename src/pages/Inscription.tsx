@@ -12,7 +12,7 @@ export class Inscription extends React.Component<Props, States> {
 
     render() {
         return (
-            <p>Inscription</p>
+            <p>Inscription  </p>
         )
     }
 }
